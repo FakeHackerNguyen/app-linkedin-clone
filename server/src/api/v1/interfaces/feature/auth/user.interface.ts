@@ -1,7 +1,7 @@
 import {Types} from 'mongoose';
 import {Role} from '../../types/user.type';
 
-export interface IUser {
+export default interface IUser {
   provider: string;
   googleId: string;
   firstName: string;
@@ -49,4 +49,5 @@ export interface IUser {
     lastestLogin: Date;
   };
   isVerified: boolean;
+  comparePassword(password: string): boolean;
 }

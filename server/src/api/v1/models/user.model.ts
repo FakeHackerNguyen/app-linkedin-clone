@@ -1,6 +1,7 @@
 import {Schema, model} from 'mongoose';
 import validator from 'validator';
-import {IUser} from '../interfaces/feature/auth/user.interface';
+import {randomBytes, scrypt, scryptSync} from 'crypto';
+import IUser from '../interfaces/feature/auth/user.interface';
 
 const userSchema = new Schema<IUser>({
   provider: {
@@ -124,5 +125,21 @@ const userSchema = new Schema<IUser>({
     maxLength: [200, 'Password must have less or equal than 200 characters'],
   },
 });
+
+userSchema.pre('save', function (next) {
+  const salt = randomBytes(16).toString('hex');
+  if (this.isModified('password')) {
+    this.password = scryptSync(this.password, salt, 32).toString('hex') + salt;
+  }
+
+  next();
+});
+
+userSchema.methods.comparePassword = function (password: string): boolean {
+  const salt = this.password.slice(64);
+  const originalPassHash = this.password.slice(0, 64);
+  const currentPassHash = scryptSync(password, salt, 32).toString('hex');
+  return originalPassHash === currentPassHash;
+};
 
 export default model<IUser>('User', userSchema);
