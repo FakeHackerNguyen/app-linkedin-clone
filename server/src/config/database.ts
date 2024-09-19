@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import AppError from '../api/v1/utils/appError';
 
 class Database {
   private uri: string = '';
@@ -10,17 +11,35 @@ class Database {
   }
 
   public async connect(): Promise<void> {
-    await mongoose.connect(this.uri, this.options);
-    console.log(
-      `Connected to database: ${mongoose.connection.db?.databaseName}`,
-    );
+    try {
+      await mongoose.connect(this.uri, this.options);
+      console.log(
+        `Connected to database: ${mongoose.connection.db?.databaseName}`,
+      );
+    } catch (error) {
+      if (error instanceof Error) throw new AppError(error.message, 500);
+
+      throw new AppError(
+        'Unknown error occurred during database connection',
+        500,
+      );
+    }
   }
 
   public async disconect(): Promise<void> {
-    await mongoose.disconnect();
-    console.log(
-      `Disconnected from database: ${mongoose.connection.db?.databaseName}`,
-    );
+    try {
+      await mongoose.disconnect();
+      console.log(
+        `Disconnected from database: ${mongoose.connection.db?.databaseName}`,
+      );
+    } catch (error) {
+      if (error instanceof Error) throw new AppError(error.message, 500);
+
+      throw new AppError(
+        'Unknown error occurred during database disconnection',
+        500,
+      );
+    }
   }
 }
 
