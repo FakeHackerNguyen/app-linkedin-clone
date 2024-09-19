@@ -4,7 +4,8 @@ import morgan from 'morgan';
 import './config/passport';
 import globalErrorHandler from './api/v1/controllers/error.controller';
 
-import authRouter from './api/v1/routes/auth.router';
+import authRouter from './api/v1/routes/auth.route';
+import userRouter from './api/v1/routes/user.route';
 
 const app = express();
 
@@ -18,7 +19,8 @@ app.use(morgan('dev'));
 app.use(express.json({limit: '10kb'}));
 app.use(express.urlencoded({extended: true, limit: '10kb'}));
 
-app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/auths', authRouter);
+app.use('/api/v1/users', userRouter);
 
 app.use('/server', (req: Request, res: Response): void => {
   res.status(200).json({

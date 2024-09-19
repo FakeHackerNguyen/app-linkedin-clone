@@ -1,7 +1,7 @@
 import {Schema, model} from 'mongoose';
-import Token from '../interfaces/feature/auth/token.interface';
+import {IAuthToken} from '../interfaces/feature/auth/token.interface';
 
-const tokenSchema = new Schema<Token>({
+const authTokenSchema = new Schema<IAuthToken>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -17,9 +17,9 @@ const tokenSchema = new Schema<Token>({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
-    expires: 60 * 60,
+    default: Date.now,
+    expires: 60 * 60 * 24,
   },
 });
 
-export default model<Token>('Token', tokenSchema);
+export default model<IAuthToken>('AuthToken', authTokenSchema);

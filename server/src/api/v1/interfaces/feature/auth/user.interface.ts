@@ -1,7 +1,11 @@
-import {Types} from 'mongoose';
-import {Role} from '../../types/user.type';
+import {Types, Document} from 'mongoose';
 
-export default interface IUser {
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+export default interface IUser extends Document {
   provider: string;
   googleId: string;
   firstName: string;
@@ -43,11 +47,16 @@ export default interface IUser {
   }>;
   email: string;
   password: string;
-  role: Role;
+  role: string;
   active: {
     status: boolean;
     lastestLogin: Date;
   };
   isVerified: boolean;
   comparePassword(password: string): boolean;
+}
+
+export interface AuthenticatedUser {
+  user: IUser;
+  newAccessToken?: string;
 }

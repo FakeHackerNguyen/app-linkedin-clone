@@ -1,6 +1,7 @@
 import AppError from '../utils/appError';
 import {NextFunction, Request, Response, ErrorRequestHandler} from 'express';
-
+// import Logger from '../utils/logger';
+// const logger = new Logger();
 interface ValidationError {
   message: string;
 }
@@ -57,10 +58,11 @@ const sendErrorDev: ErrorRequestHandler = (err, req, res, next) => {
   // A) API
   if (req.originalUrl.startsWith('/api')) {
     return res.status(err.statusCode).json({
-      status: err.status,
-      error: err,
-      message: err.message,
-      stack: err.stack,
+      data: {
+        error: err,
+        message: err.message,
+        stack: err.stack,
+      },
     });
   }
 
@@ -78,8 +80,9 @@ const sendErrorProd: ErrorRequestHandler = (err, req, res, next) => {
     // A) Operational, trusted error: send message to client
     if (err.isOperational) {
       return res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message,
+        data: {
+          message: err.message,
+        },
       });
     }
     // B) Programming or other unknown error: don't leak error details
@@ -87,8 +90,9 @@ const sendErrorProd: ErrorRequestHandler = (err, req, res, next) => {
     console.error('ERROR 💥', err);
     // 2) Send generic message
     return res.status(500).json({
-      status: 'error',
-      message: 'Something went very wrong!',
+      data: {
+        message: 'Something went very wrong!',
+      },
     });
   }
 
@@ -118,6 +122,11 @@ const globalErrorHandler: ErrorRequestHandler = (
 ): void => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+  // logger.error(err.message, {
+  //   timestamp: Date.now(),
+  //   level: 'error',
+  //   metadata: err,
+  // });
 
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, req, res, next);

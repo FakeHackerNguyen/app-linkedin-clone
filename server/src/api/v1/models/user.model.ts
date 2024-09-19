@@ -1,7 +1,6 @@
 import {Schema, model} from 'mongoose';
-import validator from 'validator';
-import {randomBytes, scrypt, scryptSync} from 'crypto';
-import IUser from '../interfaces/feature/auth/user.interface';
+import {randomBytes, scryptSync} from 'crypto';
+import IUser, {UserRole} from '../interfaces/feature/auth/user.interface';
 
 const userSchema = new Schema<IUser>({
   provider: {
@@ -18,20 +17,20 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
     trim: true,
-    minlength: [2, 'First name must have more or equal than 2 characters'],
   },
   lastName: {
     type: String,
     trim: true,
-    required: [true, 'You must have a last name'],
-    minlength: [2, 'Last name must have more or equal than 2 characters'],
+    required: true,
   },
   fullName: String,
   location: {
+    default: '',
     type: String,
     trim: true,
   },
   about: {
+    default: '',
     type: String,
     trim: true,
   },
@@ -117,12 +116,15 @@ const userSchema = new Schema<IUser>({
     required: true,
     trim: true,
     unique: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
   },
   password: {
     type: String,
-    minlength: [8, 'Password must have more or equal than 8 characters'],
-    maxLength: [200, 'Password must have less or equal than 200 characters'],
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: UserRole,
+    default: UserRole.USER,
   },
 });
 
