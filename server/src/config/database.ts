@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import AppError from '../api/v1/utils/appError';
 
-class Database {
+export default class Database {
   private uri: string = '';
   private options?: mongoose.ConnectOptions = {};
 
@@ -42,5 +42,3 @@ class Database {
     }
   }
 }
-
-export default Database;

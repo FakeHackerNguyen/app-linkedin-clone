@@ -1,6 +1,6 @@
 import {Schema, model} from 'mongoose';
 import {randomBytes, scryptSync} from 'crypto';
-import IUser, {UserRole} from '../interfaces/feature/auth/user.interface';
+import IUser, {UserRole} from '../interfaces/feature/user/user.interface';
 
 const userSchema = new Schema<IUser>({
   provider: {

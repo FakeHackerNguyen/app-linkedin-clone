@@ -12,8 +12,7 @@ import {
 } from 'passport-jwt';
 import UserService from '../api/v1/services/user.service';
 import AuthService from '../api/v1/services/auth.service';
-import userModel from '../api/v1/models/user.model';
-import IUser from '../api/v1/interfaces/feature/auth/user.interface';
+import IUser from '../api/v1/interfaces/feature/user/user.interface';
 
 const clientID = process.env.GOOGLE_CLIENT_ID as string;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET as string;

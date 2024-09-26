@@ -1,4 +1,4 @@
-import express, {NextFunction, Request, Response} from 'express';
+import express, {Express, NextFunction, Request, Response} from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import './config/passport';
@@ -7,7 +7,7 @@ import globalErrorHandler from './api/v1/controllers/error.controller';
 import authRouter from './api/v1/routes/auth.route';
 import userRouter from './api/v1/routes/user.route';
 
-const app = express();
+const app: Express = express();
 
 app.disable('x-powered-by');
 app.use(
@@ -28,7 +28,7 @@ app.use('/server', (req: Request, res: Response): void => {
   });
 });
 
-app.all('*', (req: Request, res: Response, next: NextFunction): void => {
+app.all('*', (req: Request, res: Response, _: NextFunction): void => {
   res.status(404).json({
     message: `Can't find ${req.originalUrl} on this server`,
   });

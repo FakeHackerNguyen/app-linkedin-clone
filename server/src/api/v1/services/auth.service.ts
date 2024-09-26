@@ -1,7 +1,7 @@
 import jwt, {JwtPayload} from 'jsonwebtoken';
 import authToken from '../models/authToken.model';
 import userModel from '../models/user.model';
-import IUser from '../interfaces/feature/auth/user.interface';
+import IUser from '../interfaces/feature/user/user.interface';
 import {IAuthToken} from '../interfaces/feature/auth/token.interface';
 
 export default class AuthService {

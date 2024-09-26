@@ -5,7 +5,7 @@ import emailTokenModel from '../models/emailToken.model';
 import userModel from '../models/user.model';
 import {EmailType} from '../interfaces/feature/auth/token.interface';
 import {templateOTP} from '../templates';
-import IUser from '../interfaces/feature/auth/user.interface';
+import IUser from '../interfaces/feature/user/user.interface';
 
 export default class EmailService {
   private static instance: Nodemailer;

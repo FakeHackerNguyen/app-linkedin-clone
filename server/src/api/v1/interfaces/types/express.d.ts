@@ -1,4 +1,4 @@
-import {AuthenticatedUser} from '../feature/auth/user.interface';
+import {AuthenticatedUser} from '../feature/user/user.interface';
 
 declare global {
   namespace Express {

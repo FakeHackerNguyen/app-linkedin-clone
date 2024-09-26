@@ -1,6 +1,6 @@
 import {Types} from 'mongoose';
 import userModel from '../models/user.model';
-import IUser from '../interfaces/feature/auth/user.interface';
+import IUser from '../interfaces/feature/user/user.interface';
 
 export default class UserService {
   static async createUser(
