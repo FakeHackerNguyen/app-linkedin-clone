@@ -8,18 +8,21 @@ import {
   FlatList,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  TouchableOpacity,
   Pressable,
 } from 'react-native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import slides from '../data/slides.js';
 import Logo from '../components/Logo';
+import {RootStackParams} from '../../App.js';
 
 type Slide = {
   _id: number;
   image: any;
   title: string;
 };
+
+type NavigationProp = NativeStackNavigationProp<RootStackParams, 'Intro'>;
 
 const {width, height} = Dimensions.get('screen');
 
@@ -119,10 +122,22 @@ function Slider(): React.JSX.Element {
   );
 }
 
-function Intro(): React.JSX.Element {
+function Intro({navigation}: {navigation: NavigationProp}): React.JSX.Element {
+  const [isSignupPressed, setIsSignupPressed] = useState(false);
+  const [isSigninPressed, setIsSignInPressed] = useState(false);
+
+  console.log(
+    `Intro Screen: { isSignupPressed: ${isSignupPressed}}, isSigninPressed: ${isSigninPressed} }`,
+  );
+
   return (
     <SafeAreaView className="bg-white flex-1">
-      <Logo />
+      <View
+        style={{
+          marginTop: height * 0.05,
+        }}>
+        <Logo />
+      </View>
       <Slider />
       <View
         style={{
@@ -140,12 +155,16 @@ function Intro(): React.JSX.Element {
       <View className="flex items-center justify-center">
         <Pressable
           style={{
+            backgroundColor: isSignupPressed ? '#1B4F8A' : '#2D64BC',
             width: width * 0.85,
             height: height * 0.05,
             borderRadius: width * 0.05,
             marginTop: height * 0.02,
           }}
-          className="bg-[#2D64BC] items-center justify-center">
+          className="items-center justify-center"
+          onPress={() => navigation.navigate('Signup')}
+          onPressIn={() => setIsSignupPressed(true)}
+          onPressOut={() => setIsSignupPressed(false)}>
           <Text
             style={{
               fontSize: width * 0.045,
@@ -160,10 +179,13 @@ function Intro(): React.JSX.Element {
           style={{
             width: width * 0.85,
             height: height * 0.05,
-            borderRadius: width * 0.05,
             marginTop: height * 0.02,
+            backgroundColor: isSigninPressed ? '#D8E8FB' : 'transparent',
           }}
-          className="bg-transparent items-center justify-center">
+          className="items-center justify-center"
+          onPress={() => navigation.navigate('Signin')}
+          onPressIn={() => setIsSignInPressed(true)}
+          onPressOut={() => setIsSignInPressed(false)}>
           <Text
             style={{
               fontSize: width * 0.045,

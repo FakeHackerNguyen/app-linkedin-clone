@@ -6,6 +6,7 @@ import globalErrorHandler from './api/v1/controllers/error.controller';
 
 import authRouter from './api/v1/routes/auth.route';
 import userRouter from './api/v1/routes/user.route';
+import externalRouter from './api/v1/routes/external.route';
 
 const app: Express = express();
 
@@ -21,6 +22,7 @@ app.use(express.urlencoded({extended: true, limit: '10kb'}));
 
 app.use('/api/v1/auths', authRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/externals', externalRouter);
 
 app.use('/server', (req: Request, res: Response): void => {
   res.status(200).json({
