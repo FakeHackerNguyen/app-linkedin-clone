@@ -7,14 +7,15 @@ interface InputFloatingLabelProps {
   label: string;
   visible?: boolean;
   data: string;
-  setData: React.Dispatch<React.SetStateAction<string>>;
+  onHandleChange: (value: string) => void;
+  // setData: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function InputFloatingLabel({
   label,
   visible,
   data,
-  setData,
+  onHandleChange,
 }: InputFloatingLabelProps): React.JSX.Element {
   const animatedLabelEmailPhonePosition = useRef(
     new Animated.Value((height * 0.06) / 2 - (width * 0.04) / 2 - 4),
@@ -57,7 +58,7 @@ function InputFloatingLabel({
         secureTextEntry={visible}
         autoCorrect={false}
         value={data}
-        onChangeText={value => setData(value)}
+        onChangeText={onHandleChange}
       />
     </View>
   );

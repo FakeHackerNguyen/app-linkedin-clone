@@ -58,11 +58,9 @@ const sendErrorDev: ErrorRequestHandler = (err, req, res, next) => {
   // A) API
   if (req.originalUrl.startsWith('/api')) {
     return res.status(err.statusCode).json({
-      data: {
-        error: err,
-        message: err.message,
-        stack: err.stack,
-      },
+      error: err,
+      message: err.message,
+      stack: err.stack,
     });
   }
 
@@ -80,9 +78,7 @@ const sendErrorProd: ErrorRequestHandler = (err, req, res, next) => {
     // A) Operational, trusted error: send message to client
     if (err.isOperational) {
       return res.status(err.statusCode).json({
-        data: {
-          message: err.message,
-        },
+        message: err.message,
       });
     }
     // B) Programming or other unknown error: don't leak error details
@@ -90,9 +86,7 @@ const sendErrorProd: ErrorRequestHandler = (err, req, res, next) => {
     console.error('ERROR 💥', err);
     // 2) Send generic message
     return res.status(500).json({
-      data: {
-        message: 'Something went very wrong!',
-      },
+      message: 'Something went very wrong!',
     });
   }
 

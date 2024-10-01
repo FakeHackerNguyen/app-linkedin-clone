@@ -111,7 +111,10 @@ export default function RegisterAddingEmail({
       setfieldPasswordVisible(true);
     }
 
-    // navigation.navigate('Adding');
+    if (fieldPasswordVisible) {
+    }
+
+    // navigation.replace('AddingProfile');
   };
 
   useEffect(() => {

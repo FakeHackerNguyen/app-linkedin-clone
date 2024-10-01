@@ -12,8 +12,4 @@ const createLimiter = (windowMs: number, max: number, message: string) => {
 
 export const signUpSignInLimiter = createLimiter(10 * 60 * 1000, 100, MESSAGE);
 export const otpLimiter = createLimiter(5 * 60 * 1000, 1, MESSAGE);
-export const locationLimiter = createLimiter(
-  24 * 60 * 60 * 1000,
-  2500,
-  MESSAGE,
-);
+export const searchLimiter = createLimiter(24 * 60 * 60 * 1000, 2500, MESSAGE);

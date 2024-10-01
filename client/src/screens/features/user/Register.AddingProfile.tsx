@@ -1,39 +1,48 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {RegisterStackParams} from '../../../navigation/RegisterNavigator.tsx';
 import {
   Dimensions,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
   View,
   Text,
   Switch,
   TextInput,
   Animated,
   Pressable,
-  Modal,
-  FlatList,
 } from 'react-native';
 import Logo from '../../../components/Logo.tsx';
-import {getLocations} from '../../../api/externalApi.ts';
+import {
+  getCompanies,
+  getJobTitles,
+  getLocations,
+  getUniversities,
+} from '../../../api/externalApi.ts';
+import SearchableModal from '../../../components/SearchableModal.tsx';
+import DropDownArrow from '../../../components/DropDownArrow.tsx';
 
 const {width, height} = Dimensions.get('screen');
 
-type Company = {
+export type Company = {
   name: string;
+  avatar: {
+    url: string;
+    public_id: string;
+  };
   typeOfBusiness: string;
 };
-type University = {
+export type School = {
   name: string;
+  avatar: {
+    url: string;
+    public_id: string;
+  };
   region: string;
 };
 type Profile = {
   location: string;
   jobTitle?: string;
   company?: Company;
-  university?: University;
+  school?: School;
   startYear?: string;
   endYear?: string;
 };
@@ -43,11 +52,18 @@ const defaultProfile = {
   jobTitle: '',
   company: {
     name: '',
+    avatar: {
+      url: '',
+      public_id: '',
+    },
     typeOfBusiness: '',
   },
-  employmentType: '',
   school: {
     name: '',
+    avatar: {
+      url: '',
+      public_id: '',
+    },
     region: '',
   },
   startYear: '',
@@ -59,6 +75,8 @@ type NavigationProp = NativeStackNavigationProp<
   'AddingEmail'
 >;
 
+type ModalSearchableType = 'Location' | 'Job Title' | 'Company' | 'School';
+
 export default function RegisterAddingProfile({
   navigation,
 }: {
@@ -66,20 +84,27 @@ export default function RegisterAddingProfile({
 }): React.JSX.Element {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [query, setQuery] = useState('');
-  const [suggestLocation, setSuggestLocation] = useState<string[]>([]);
-
+  const [suggestData, setSuggestData] = useState<(string | Company | School)[]>(
+    [],
+  );
   const [isEnabeldSwitch, setIsEnabledSwitch] = useState(false);
-  const [isClosePressed, setIsClosePressed] = useState(false);
+  const [modalSearchType, setModalSearchType] =
+    useState<ModalSearchableType>('Location');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isContinuePressed, setIsContinuePressed] = useState(false);
+
   const slideAnim = useRef(new Animated.Value(height)).current;
 
-  const openModal = () => {
+  const openModal = (type: ModalSearchableType) => {
     setIsModalVisible(true);
     Animated.timing(slideAnim, {
       toValue: 0, // Moves the modal to the top (on-screen)
       duration: 300,
       useNativeDriver: true,
-    }).start();
+    }).start(() => {
+      setModalSearchType(type);
+    });
   };
 
   const closeModal = () => {
@@ -89,6 +114,8 @@ export default function RegisterAddingProfile({
       useNativeDriver: true,
     }).start(() => {
       setIsModalVisible(false);
+      setQuery('');
+      setSuggestData([]);
     });
   };
 
@@ -96,72 +123,196 @@ export default function RegisterAddingProfile({
     setIsEnabledSwitch(previousState => !previousState);
   };
 
-  const handleChangeQuery = async (value: string) => {
+  const handleQueryChange = async (value: string) => {
     setQuery(value);
+    let res;
+    if (modalSearchType === 'Location') {
+      res = await getLocations(value);
+    } else if (modalSearchType === 'Job Title') {
+      res = await getJobTitles(value);
+    } else if (modalSearchType === 'Company') {
+      res = await getCompanies(value);
+    } else if (modalSearchType === 'School') {
+      res = await getUniversities(value);
+    }
+
+    const data = res!.data;
+    if (data) {
+      return setSuggestData(data);
+    }
   };
 
+  useEffect(() => {
+    if (
+      !isEnabeldSwitch &&
+      (!profile.location || !profile.jobTitle || !profile.company?.name)
+    ) {
+      return;
+    }
+
+    setIsFormValid(true);
+  }, [isEnabeldSwitch, profile]);
+
+  console.log(`Register.AddingProfile: {modalType: ${modalSearchType}}`);
+  console.log(profile);
+  console.log(isFormValid);
+
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-        //   setSuggestions([]);
-      }}>
-      <View className="flex-1 bg-white">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? height * 0.1 : 0}
-          className="flex-1">
-          <View
+    <View className="flex-1 bg-white">
+      <View
+        style={{
+          marginTop: height * 0.05,
+        }}
+        className="flex-row items-center">
+        <Logo />
+      </View>
+      <View className="mx-8 mt-10 flex-1">
+        <Text
+          style={{
+            fontSize: width * 0.07,
+          }}
+          className="font-extrabold text-black">
+          Your profile helps you discover new people and opportunities
+        </Text>
+        <View className="mt-5 flex-row items-center justify-between">
+          <Text
             style={{
-              marginTop: height * 0.05,
-            }}>
-            <Logo />
-          </View>
-          <View className="mx-8 mt-10">
+              fontSize: width * 0.04,
+            }}
+            className="text-black font-extrabold">
+            I'm a student
+          </Text>
+          <View className="flex-row items-center gap-1">
             <Text
               style={{
-                fontSize: width * 0.07,
+                fontSize: width * 0.035,
               }}
-              className="font-extrabold text-black">
-              Your profile helps you discover new people and opportunities
+              className="text-[#666] font-medium">
+              {isEnabeldSwitch ? 'Yes' : 'No'}
             </Text>
-            <View className="mt-5 flex-row items-center justify-between">
-              <Text
+            <Switch
+              trackColor={{false: '#767577', true: 'green'}}
+              thumbColor="#f4f3f4"
+              ios_backgroundColor="#3e3e3e"
+              value={isEnabeldSwitch}
+              onValueChange={toggleSwitch}
+            />
+          </View>
+        </View>
+
+        <View className="mt-5">
+          <Text
+            style={{
+              fontSize: width * 0.04,
+            }}
+            className="text-[#676767] font-semibold">
+            Location*
+          </Text>
+          <Pressable onPress={() => openModal('Location')}>
+            <TextInput
+              className="text-black w-max border rounded-[4px] font-medium py-0 px-2"
+              style={{
+                height: height * 0.04,
+                fontSize: width * 0.04,
+              }}
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={false}
+              pointerEvents="none"
+              value={profile.location}
+            />
+          </Pressable>
+        </View>
+        {!isEnabeldSwitch && (
+          <View className="mt-5">
+            <Text
+              style={{
+                fontSize: width * 0.04,
+              }}
+              className="text-[#676767] font-semibold">
+              Most recent job title*
+            </Text>
+            <Pressable onPress={() => openModal('Job Title')}>
+              <TextInput
+                className="text-black w-max border rounded-[4px] font-medium py-0 px-2"
                 style={{
+                  height: height * 0.04,
                   fontSize: width * 0.04,
                 }}
-                className="text-black font-extrabold">
-                I'm a student
-              </Text>
-              <View className="flex-row items-center gap-1">
-                <Text
-                  style={{
-                    fontSize: width * 0.035,
-                  }}
-                  className="text-[#666] font-medium">
-                  {isEnabeldSwitch ? 'Yes' : 'No'}
-                </Text>
-                <Switch
-                  trackColor={{false: '#767577', true: 'green'}}
-                  thumbColor="#f4f3f4"
-                  ios_backgroundColor="#3e3e3e"
-                  value={isEnabeldSwitch}
-                  onValueChange={toggleSwitch}
-                />
-              </View>
-            </View>
-
-            <View className="mt-5">
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={false}
+                pointerEvents="none"
+                value={profile.jobTitle}
+              />
+            </Pressable>
+          </View>
+        )}
+        {!isEnabeldSwitch && (
+          <View className="mt-5">
+            <Text
+              style={{
+                fontSize: width * 0.04,
+              }}
+              className="text-[#676767] font-semibold">
+              Most recent company*
+            </Text>
+            <Pressable onPress={() => openModal('Company')}>
+              <TextInput
+                className="text-black w-max border rounded-[4px] font-medium py-0 px-2"
+                style={{
+                  height: height * 0.04,
+                  fontSize: width * 0.04,
+                }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={false}
+                pointerEvents="none"
+                value={profile.company!.name}
+              />
+            </Pressable>
+          </View>
+        )}
+        {isEnabeldSwitch && (
+          <View className="mt-5">
+            <Text
+              style={{
+                fontSize: width * 0.04,
+              }}
+              className="text-[#676767] font-semibold">
+              University/School*
+            </Text>
+            <Pressable onPress={() => openModal('School')}>
+              <TextInput
+                className="text-black w-max border rounded-[4px] font-medium py-0 px-2"
+                style={{
+                  height: height * 0.04,
+                  fontSize: width * 0.04,
+                }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={false}
+                pointerEvents="none"
+                value={profile.jobTitle}
+              />
+            </Pressable>
+          </View>
+        )}
+        {isEnabeldSwitch && (
+          <View className="flex-row gap-2 mt-5">
+            <View className="flex-1">
               <Text
                 style={{
                   fontSize: width * 0.04,
                 }}
                 className="text-[#676767] font-semibold">
-                Location*
+                Start Year*
               </Text>
-              <Pressable onPress={openModal}>
+              <Pressable
+                className="flex-row items-center border rounded-[4px]"
+                onPress={() => openModal('School')}>
                 <TextInput
-                  className="text-black w-max border rounded-[4px] font-medium py-0 px-2"
+                  className="flex-1 text-black w-max font-medium py-0 px-2"
                   style={{
                     height: height * 0.04,
                     fontSize: width * 0.04,
@@ -170,89 +321,87 @@ export default function RegisterAddingProfile({
                   autoCorrect={false}
                   editable={false}
                   pointerEvents="none"
-                  value={profile.location}
-                  // onChangeText={handleChange}
+                  value={profile.jobTitle}
                 />
+                <DropDownArrow />
+              </Pressable>
+            </View>
+            <View className="flex-1">
+              <Text
+                style={{
+                  fontSize: width * 0.04,
+                }}
+                className="text-[#676767] font-semibold">
+                End Year*
+              </Text>
+              <Pressable className="flex-row items-center border rounded-[4px]">
+                <TextInput
+                  className="flex-1 text-black w-max font-medium py-0 px-2"
+                  style={{
+                    height: height * 0.04,
+                    fontSize: width * 0.04,
+                  }}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={false}
+                  pointerEvents="none"
+                  value={profile.jobTitle}
+                />
+                <DropDownArrow />
               </Pressable>
             </View>
           </View>
-        </KeyboardAvoidingView>
-
-        <Modal visible={isModalVisible} transparent={true} animationType="none">
-          <Animated.View
-            className="bg-white h-full w-full absolute"
-            style={{
-              transform: [{translateY: slideAnim}],
-            }}>
-            <View
-              style={{
-                marginTop: height * 0.04,
-              }}
-              className="relative flex-row items-center">
-              <Pressable
-                onPressIn={() => setIsClosePressed(true)}
-                onPressOut={() => setIsClosePressed(false)}
-                onPress={() => {
-                  setQuery('');
-                  setSuggestLocation([]);
-                  closeModal();
-                }}
-                className="absolute pl-4">
-                <Text
-                  style={{
-                    fontSize: width * 0.05,
-                    color: isClosePressed ? 'gray' : '#666',
-                  }}
-                  className="font-bold">
-                  ✕
-                </Text>
-              </Pressable>
-              <View className="flex-1 items-center">
-                <Text
-                  style={{
-                    fontSize: width * 0.05,
-                  }}
-                  className="text-black font-extrabold">
-                  Location
-                </Text>
-              </View>
-            </View>
-
-            <TextInput
-              placeholder="Location"
-              placeholderTextColor="#676767"
-              className="text-[#676767] border-t border-b border-[#eaeaea] font-medium mt-3 px-4"
-              style={{
-                fontSize: width * 0.035,
-              }}
-              value={query}
-              onChangeText={value => handleChangeQuery(value)}
-            />
-            <FlatList
-              data={suggestLocation}
-              keyExtractor={item => item}
-              renderItem={({item}) => (
-                <Pressable
-                  onPress={() => {
-                    setProfile({...profile, location: item});
-                    setQuery('');
-                    setSuggestLocation([]);
-                    closeModal();
-                  }}>
-                  <Text
-                    className="text-black font-extrabold border-b border-[#eaeaea] p-3.5"
-                    style={{
-                      fontSize: width * 0.038,
-                    }}>
-                    {item}
-                  </Text>
-                </Pressable>
-              )}
-              className="bg-white w-full border-l border-b border-r border-gray-300 mt-1 z-50"
-            />
-          </Animated.View>
-        </Modal>
+        )}
       </View>
-    </TouchableWithoutFeedback>
+      <View className="flex items-center justify-center mb-4">
+        <Pressable
+          disabled={!isFormValid}
+          style={{
+            backgroundColor: isFormValid
+              ? isContinuePressed
+                ? '#1B4F8A'
+                : '#2D64BC'
+              : '#EAEAEA',
+            width: width * 0.85,
+            height: height * 0.05,
+            borderRadius: width * 0.05,
+          }}
+          className="items-center justify-center"
+          onPress={() => navigation.replace('AddingAvatar')}
+          onPressIn={() => setIsContinuePressed(true)}
+          onPressOut={() => setIsContinuePressed(false)}>
+          <Text
+            style={{
+              fontSize: width * 0.045,
+              color: isFormValid ? '#fff' : '#A4A4A4',
+            }}
+            className="text-white font-bold">
+            Next
+          </Text>
+        </Pressable>
+      </View>
+
+      <SearchableModal
+        slideAnim={slideAnim}
+        isModalVisible={isModalVisible}
+        modalType={modalSearchType}
+        query={query}
+        onCloseModal={closeModal}
+        onHandleChangeQuery={handleQueryChange}
+        data={suggestData}
+        onSelect={item => {
+          if (modalSearchType === 'Location') {
+            setProfile({...profile, location: item as string});
+          } else if (modalSearchType === 'Job Title') {
+            setProfile({...profile, jobTitle: item as string});
+          } else if (modalSearchType === 'Company') {
+            setProfile({...profile, company: item as Company});
+          } else if (modalSearchType === 'School') {
+            setProfile({...profile, school: item as School});
+          }
+          closeModal();
+        }}
+      />
+    </View>
   );
 }
