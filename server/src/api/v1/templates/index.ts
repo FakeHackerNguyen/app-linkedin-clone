@@ -1,4 +1,4 @@
-export function templateNotification(to: string, title: string): string {
+export function templateNotification(to: string, reason: string): string {
   return `<div
       style="
         margin-left: auto;
@@ -43,13 +43,13 @@ export function templateNotification(to: string, title: string): string {
               line-height: 1.333;
             "
           >
-            ${title}
+            ${reason}
           </h1>
         </div>
       </main>
     </div>`;
 }
-export function templateOTP(to: string, otp: string, title: string) {
+export function templateOTP(to: string, otp: string, reason: string) {
   return `
   <div
       style="
@@ -95,7 +95,7 @@ export function templateOTP(to: string, otp: string, title: string) {
               line-height: 1.333;
             "
           >
-            ${title}
+            ${reason}
           </h1>
           <p
             style="

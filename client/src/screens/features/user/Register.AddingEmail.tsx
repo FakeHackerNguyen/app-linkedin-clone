@@ -14,7 +14,9 @@ import {
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RegisterStackParams} from '../../../navigation/RegisterNavigator.tsx';
 import {RootStackParams} from '../../../../App';
-import BackIcon from '../../../components/BackIcon.tsx';
+import BackIcon from '../../../components/icons/BackIcon.tsx';
+import {RouteProp} from '@react-navigation/native';
+import {register} from '../../../api/userApi.ts';
 
 const {width, height} = Dimensions.get('screen');
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,21 +28,22 @@ const emailDomains = [
   '@hotmail.com',
 ];
 
-type NavigationProp = NativeStackNavigationProp<
-  RegisterStackParams & RootStackParams,
-  'AddingEmail'
->;
-
+type AddingEmailProps = {
+  route: RouteProp<RegisterStackParams, 'AddingEmail'>;
+  navigation: NativeStackNavigationProp<
+    RegisterStackParams & RootStackParams,
+    'AddingEmail'
+  >;
+};
 type Error = {
   email: string;
   password: string;
 };
 
 export default function RegisterAddingEmail({
+  route,
   navigation,
-}: {
-  navigation: NavigationProp;
-}): React.JSX.Element {
+}: AddingEmailProps): React.JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -56,6 +59,7 @@ export default function RegisterAddingEmail({
     email: '',
     password: '',
   });
+  const {firstName, lastName} = route.params;
 
   console.log(
     `Register Adding Email: { email: ${email}, error: {email: ${errors.email}, password: ${errors.password}}}`,
@@ -86,7 +90,7 @@ export default function RegisterAddingEmail({
     setSuggestions([]);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     let error: Error = {
       email: '',
       password: '',
@@ -107,14 +111,22 @@ export default function RegisterAddingEmail({
       return setErrors(error);
     }
 
-    if (error.email === '') {
-      setfieldPasswordVisible(true);
+    if (!fieldPasswordVisible && error.email === '') {
+      return setfieldPasswordVisible(true);
     }
 
-    if (fieldPasswordVisible) {
-    }
+    if (fieldPasswordVisible && error.password === '') {
+      const {errorMessage} = await register({
+        firstName,
+        lastName,
+        email,
+        password,
+      });
 
-    // navigation.replace('AddingProfile');
+      if (!errorMessage) {
+        return navigation.replace('AddingProfile', {email});
+      }
+    }
   };
 
   useEffect(() => {

@@ -11,24 +11,42 @@ import Logo from '../../../components/Logo';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RegisterStackParams} from '../../../navigation/RegisterNavigator.tsx';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {RouteProp} from '@react-navigation/native';
+import {updateAvatar} from '../../../api/userApi.ts';
 
 const {width, height} = Dimensions.get('screen');
 
-type NavigationProp = NativeStackNavigationProp<
-  RegisterStackParams,
-  'AddingName'
->;
+type AddingAvatarProps = {
+  route: RouteProp<RegisterStackParams, 'AddingAvatar'>;
+  navigation: NativeStackNavigationProp<RegisterStackParams, 'AddingAvatar'>;
+};
 
 export default function RegisterAddingAvatar({
+  route,
   navigation,
-}: {
-  navigation: NavigationProp;
-}): React.JSX.Element {
+}: AddingAvatarProps): React.JSX.Element {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isContinuePressed, setIsContinuePressed] = useState(false);
   const [isSkipPressed, setIsSkipPressed] = useState(false);
+  const {email} = route.params;
 
-  console.log(selectedImage);
+  const handleContinue = async () => {
+    const formData = new FormData();
+
+    const type = `image/${selectedImage?.split('.')[2]}`;
+
+    formData.append('email', email);
+    formData.append('file', {
+      uri: selectedImage,
+      type,
+      name: 'avatar',
+    });
+
+    const {errorMessage} = await updateAvatar(formData);
+    if (!errorMessage) {
+      return navigation.replace('VerifyingEmail', {email});
+    }
+  };
 
   const handleImageSelect = () => {
     launchImageLibrary(
@@ -115,45 +133,70 @@ export default function RegisterAddingAvatar({
       </View>
 
       <View className="flex items-center justify-center mb-4">
-        <Pressable
-          style={{
-            backgroundColor: isContinuePressed ? '#1B4F8A' : '#2D64BC',
-            width: width * 0.85,
-            height: height * 0.05,
-            borderRadius: width * 0.05,
-          }}
-          className="items-center justify-center"
-          onPress={handleImageSelect}
-          onPressIn={() => setIsContinuePressed(true)}
-          onPressOut={() => setIsContinuePressed(false)}>
-          <Text
+        {selectedImage ? (
+          <Pressable
             style={{
-              fontSize: width * 0.045,
+              backgroundColor: isContinuePressed ? '#1B4F8A' : '#2D64BC',
+              width: width * 0.85,
+              height: height * 0.05,
+              borderRadius: width * 0.05,
             }}
-            className="text-white font-bold">
-            Add a photo
-          </Text>
-        </Pressable>
-        <Pressable
-          style={{
-            backgroundColor: isSkipPressed ? '#e0e0e0' : 'transparent',
-            width: width * 0.85,
-            height: height * 0.05,
-            marginTop: height * 0.02,
-          }}
-          className="items-center justify-center"
-          onPress={() => navigation.replace('AddingAvatar')}
-          onPressIn={() => setIsSkipPressed(true)}
-          onPressOut={() => setIsSkipPressed(false)}>
-          <Text
-            style={{
-              fontSize: width * 0.045,
-              color: isContinuePressed ? '#000' : '#666',
-            }}
-            className="text-white font-bold">
-            Skip for now
-          </Text>
-        </Pressable>
+            className="items-center justify-center"
+            onPress={handleContinue}
+            onPressIn={() => setIsContinuePressed(true)}
+            onPressOut={() => setIsContinuePressed(false)}>
+            <Text
+              style={{
+                fontSize: width * 0.045,
+              }}
+              className="text-white font-bold">
+              Continue
+            </Text>
+          </Pressable>
+        ) : null}
+        {!selectedImage ? (
+          <>
+            <Pressable
+              style={{
+                backgroundColor: isContinuePressed ? '#1B4F8A' : '#2D64BC',
+                width: width * 0.85,
+                height: height * 0.05,
+                borderRadius: width * 0.05,
+              }}
+              className="items-center justify-center"
+              onPress={handleImageSelect}
+              onPressIn={() => setIsContinuePressed(true)}
+              onPressOut={() => setIsContinuePressed(false)}>
+              <Text
+                style={{
+                  fontSize: width * 0.045,
+                }}
+                className="text-white font-bold">
+                Add a photo
+              </Text>
+            </Pressable>
+            <Pressable
+              style={{
+                backgroundColor: isSkipPressed ? '#e0e0e0' : 'transparent',
+                width: width * 0.85,
+                height: height * 0.05,
+                marginTop: height * 0.02,
+              }}
+              className="items-center justify-center"
+              onPress={() => navigation.replace('VerifyingEmail', {email})}
+              onPressIn={() => setIsSkipPressed(true)}
+              onPressOut={() => setIsSkipPressed(false)}>
+              <Text
+                style={{
+                  fontSize: width * 0.045,
+                  color: isContinuePressed ? '#000' : '#666',
+                }}
+                className="text-white font-bold">
+                Skip for now
+              </Text>
+            </Pressable>
+          </>
+        ) : null}
       </View>
     </View>
   );

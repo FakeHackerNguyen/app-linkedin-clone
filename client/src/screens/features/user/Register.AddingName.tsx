@@ -59,7 +59,7 @@ export default function RegisterAddingName({
       return setErrors(error);
     }
 
-    navigation.navigate('AddingEmail');
+    navigation.navigate('AddingEmail', {firstName, lastName});
   };
 
   return (

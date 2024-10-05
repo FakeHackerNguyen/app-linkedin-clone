@@ -1,6 +1,9 @@
 import {Types} from 'mongoose';
 import userModel from '../models/user.model';
 import IUser from '../interfaces/feature/user/user.interface';
+import {Experience} from '../interfaces';
+import EmailService from './email.service';
+import emailTokenModel from '../models/emailToken.model';
 
 export default class UserService {
   static async createUser(
@@ -14,9 +17,22 @@ export default class UserService {
       lastName,
       email,
       password,
+      fullName: `${firstName} ${lastName}`,
     });
   }
-  static async updateUser() {}
+  static async updateUser(
+    email: string,
+    location: string,
+    experiences: Array<Experience>,
+  ): Promise<boolean> {
+    const existingUser = await this.getUserByEmail(email);
+    if (!existingUser) return false;
+
+    existingUser.location = location;
+    existingUser.experiences = experiences;
+    await existingUser.save();
+    return true;
+  }
   // ADDITONAL WAY
   // static async getUserByEmail(
   //   email: string,
@@ -35,6 +51,25 @@ export default class UserService {
 
     return existingUser;
   }
+
+  static async getUsersByName(query: string): Promise<IUser[]> {
+    const q = query
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s/g, '');
+
+    const allUsers = await userModel.find().lean();
+    const users = allUsers.filter(value =>
+      value.fullName
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s/g, '')
+        .toLowerCase()
+        .includes(q.toLowerCase()),
+    );
+    return users;
+  }
+
   static async checkUserPassword(
     user: IUser,
     password: string,
@@ -42,9 +77,12 @@ export default class UserService {
     return user.comparePassword(password);
   }
   static async updateUserPassword(
-    email: string,
+    user: IUser,
     newPassword: string,
   ): Promise<void> {
-    await userModel.updateOne({email}, {password: newPassword});
+    user.password = newPassword;
+
+    await emailTokenModel.deleteOne({user: user._id, for: 'Forgot Password'});
+    await user.save();
   }
 }

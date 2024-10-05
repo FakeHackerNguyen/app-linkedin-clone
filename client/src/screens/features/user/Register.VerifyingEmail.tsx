@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -12,22 +12,72 @@ import Logo from '../../../components/Logo';
 import {RootStackParams} from '../../../../App';
 import {RegisterStackParams} from '../../../navigation/RegisterNavigator';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RouteProp} from '@react-navigation/native';
+import {sendOtp, verifyOtp} from '../../../api/userApi';
 
 const {width, height} = Dimensions.get('screen');
 
-type NavigationProp = NativeStackNavigationProp<
-  RegisterStackParams & RootStackParams,
-  'VerifyingEmail'
->;
+type Error = {
+  code: string;
+};
+
+type VerifyingEmailProps = {
+  route: RouteProp<RegisterStackParams, 'VerifyingEmail'>;
+  navigation: NativeStackNavigationProp<
+    RegisterStackParams & RootStackParams,
+    'VerifyingEmail'
+  >;
+};
 
 export default function RegisterVerifyingEmail({
+  route,
   navigation,
-}: {
-  navigation: NavigationProp;
-}): React.JSX.Element {
+}: VerifyingEmailProps): React.JSX.Element {
   const [code, setCode] = useState('');
   const [isContinuePressed, setIsContinuePressed] = useState(false);
   const [isResendPressed, setIsResendPressed] = useState(false);
+  const [errors, setErrors] = useState<Error>({
+    code: '',
+  });
+
+  const {email} = route.params;
+
+  const handleSendOtp = async () => {
+    let error: Error = {
+      code: '',
+    };
+
+    if (!code) {
+      error.code = "That's not the right code";
+    }
+
+    if (
+      Object.values(error).some((e: string) => {
+        return e.trim() !== '';
+      })
+    ) {
+      return setErrors(error);
+    }
+
+    const {errorMessage} = await sendOtp(email, 'Sign Up');
+
+    if (!errorMessage) {
+      return;
+    }
+  };
+
+  const handleNext = async () => {
+    const {data} = await verifyOtp(email, code, 'Sign Up');
+
+    if (data.isValid) {
+      return navigation.replace('Signin');
+    }
+  };
+
+  useEffect(() => {
+    handleSendOtp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View className="flex-1 bg-white">
@@ -79,6 +129,15 @@ export default function RegisterVerifyingEmail({
               value={code}
               onChangeText={(value: string) => setCode(value)}
             />
+            {errors.code ? (
+              <Text
+                style={{
+                  fontSize: width * 0.038,
+                }}
+                className="text-red-600 font-extrabold">
+                {errors.code}
+              </Text>
+            ) : null}
           </View>
         </View>
 
@@ -110,7 +169,7 @@ export default function RegisterVerifyingEmail({
               marginTop: height * 0.02,
             }}
             className="items-center justify-center"
-            onPress={() => navigation.replace('Signin')}
+            onPress={handleNext}
             onPressIn={() => setIsContinuePressed(true)}
             onPressOut={() => setIsContinuePressed(false)}>
             <Text

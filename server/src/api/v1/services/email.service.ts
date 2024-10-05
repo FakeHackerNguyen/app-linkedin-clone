@@ -20,7 +20,7 @@ export default class EmailService {
     return EmailService.instance;
   }
 
-  public static async sendOTP(user: IUser, title: string): Promise<void> {
+  public static async sendOTP(user: IUser, reason: string): Promise<void> {
     const randomOtp = randomDigit(6);
     const otpJwtSecret = process.env.OTP_JWT_SECRET as string;
     const otpJwtSecretExpires = process.env.OTP_JWT_EXPIRES_IN as string;
@@ -38,18 +38,20 @@ export default class EmailService {
     const html = templateOTP(
       `${user.firstName} ${user.lastName}`,
       randomOtp,
-      title,
+      reason,
     );
 
     await this.getInstance().sendMail(from, to, subject, html);
-    console.log(randomOtp);
+
     await emailTokenModel.create({
       user: user._id,
       type: EmailType.OTP,
+      for: reason,
       token: otpToken,
       createdAt: Date.now(),
     });
   }
+
   public static async sendNotification(
     user: IUser,
     content: string,
@@ -66,14 +68,20 @@ export default class EmailService {
       content,
     });
   }
-  public static async verifyOTP(otp: string, user: IUser): Promise<boolean> {
+  public static async verifyOTP(
+    reason: string,
+    otp: string,
+    user: IUser,
+  ): Promise<boolean> {
     const emailToken = await emailTokenModel
-      .findOne({user: user._id})
+      .findOne({user: user._id, for: reason})
       .sort({createdAt: -1})
       .limit(1);
 
+    if (!emailToken) return false;
+
     const otpJwtSecret = process.env.OTP_JWT_SECRET as string;
-    const otpPayload = jwt.verify(emailToken?.token as string, otpJwtSecret, {
+    const otpPayload = jwt.verify(emailToken.token as string, otpJwtSecret, {
       ignoreExpiration: true,
     }) as JwtPayload;
 
@@ -84,7 +92,11 @@ export default class EmailService {
       return false;
     }
 
-    await emailTokenModel.deleteOne({user: user._id});
+    if (reason === 'Sign Up') {
+      await userModel.updateOne({_id: user._id}, {isVerified: true});
+      await emailTokenModel.deleteOne({_id: emailToken._id});
+    }
+
     return true;
   }
 }

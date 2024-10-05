@@ -15,6 +15,7 @@ export interface IAuthToken extends Document {
 export interface IEmailToken extends Document {
   user: Types.ObjectId;
   type: string;
+  for: string;
   content?: string;
   token?: string;
   createdAt?: Date;

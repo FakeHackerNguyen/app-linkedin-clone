@@ -11,6 +11,9 @@ import {
 import InputFloatingLabel from '../../../components/InputFloatingLabel';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../../App';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../../redux/store';
+import {login} from '../../../redux/actions/authAction';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -28,6 +31,12 @@ export default function Login({
   const [isForgotPasswordPressed, setIsForgotPasswordPressed] = useState(false);
   const [isSigninPressed, setIsSignInPressed] = useState(false);
   const [isClosePressed, setIsClosePressed] = useState(false);
+
+  // const {loading, user, error, accessToken, accessTokenUpdateAt} = useSelector(
+  //   (state: Store) => state.auth,
+  // );
+
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (password === '') {
@@ -154,6 +163,10 @@ export default function Login({
               marginTop: height * 0.02,
             }}
             className="items-center justify-center"
+            onPress={async () => {
+              await dispatch(login({email: emailPhone, password}));
+              navigation.navigate('Main');
+            }}
             onPressIn={() => setIsSignInPressed(true)}
             onPressOut={() => setIsSignInPressed(false)}>
             <Text

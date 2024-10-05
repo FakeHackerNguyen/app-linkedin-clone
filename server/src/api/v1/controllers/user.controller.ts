@@ -5,6 +5,7 @@ import UserService from '../services/user.service';
 import EmailService from '../services/email.service';
 import AuthService from '../services/auth.service';
 import {CustomRequest} from '../interfaces';
+import cloudinary from '../../../config/cloudinary';
 
 export const login = catchAsyncError(async (req, res, next) => {
   const {email, password} = req.body;
@@ -123,13 +124,15 @@ export const refreshToken = catchAsyncError(async (req, res, next) => {
   });
 });
 
-export const forgotPassword = catchAsyncError(async (req, res, next) => {
-  const {email} = req.body;
+export const sendOtp = catchAsyncError(async (req, res, next) => {
+  const {email, reason} = req.body;
+
+  if (!reason) return next(new AppError('Reason is required!', 401));
 
   const existingUser = await UserService.getUserByEmail(email);
   if (!existingUser) return next(new AppError('Email is not found', 404));
 
-  await EmailService.sendOTP(existingUser, 'Forgot Password');
+  await EmailService.sendOTP(existingUser, reason);
 
   res.status(200).json({
     data: {
@@ -137,34 +140,92 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
     },
   });
 });
+
 export const verifyOTPToken = catchAsyncError(
   async (req: CustomRequest, res, next) => {
-    const {otp, email} = req.body;
+    const {otp, reason, email} = req.body;
 
-    if (!otp || !email)
-      return next(new AppError('Please input otp or email', 401));
+    if (!otp || !email || !reason)
+      return next(new AppError('Please input otp or email or reason', 401));
 
     const existingUser = await UserService.getUserByEmail(email);
     if (!existingUser) return next(new AppError('User not found', 404));
 
-    const isValidOTP = await EmailService.verifyOTP(otp, existingUser);
+    const isValidOTP = await EmailService.verifyOTP(reason, otp, existingUser);
     if (!isValidOTP)
       return next(new AppError('OTP is not correct or expired', 404));
 
-    req.email = email;
+    existingUser.isVerified = true;
+    await existingUser.save();
+
+    req.reqUser = existingUser;
     next();
   },
 );
+
 export const resetPassword = catchAsyncError(
   async (req: CustomRequest, res, next) => {
     const {newPassword} = req.body;
-    const {email} = req;
+    const user = req.reqUser;
 
-    await UserService.updateUserPassword(email as string, newPassword);
+    if (!user || !newPassword) return next(new AppError('Unknown error', 400));
+
+    await UserService.updateUserPassword(user, newPassword);
 
     res.status(200).json({
       data: {
         message: 'Password is reset successfully. Please login again',
+      },
+    });
+  },
+);
+
+export const updateInfoUser = catchAsyncError(async (req, res, next) => {
+  const {email, location, experiences, educations} = req.body;
+
+  const isSuccess = await UserService.updateUser(email, location, experiences);
+
+  if (!isSuccess) {
+    return next(new AppError('Updating user is fail', 400));
+  }
+
+  res.status(200).json({
+    data: {
+      message: 'Upading user is success',
+    },
+  });
+});
+
+export const updateAvatar = catchAsyncError(
+  async (req: CustomRequest, res, next) => {
+    const {email} = req.body;
+    const files = req.reqFiles;
+
+    const existingUser = await UserService.getUserByEmail(email);
+    if (!existingUser) return next(new AppError('User is not found', 404));
+
+    if (Array.isArray(files) && files[0]) {
+      const avatarId = existingUser.avatar.public_id;
+      if (avatarId) {
+        if (!avatarId.includes('default-avatar')) {
+          const {result} = await cloudinary.uploader.destroy(avatarId);
+          if (result !== 'ok') {
+            return next(new AppError('Failed to delete old avatar', 400));
+          }
+        }
+      }
+      const {secure_url: url, public_id} = await cloudinary.uploader.upload(
+        files[0].path,
+        {folder: 'avatars'},
+      );
+
+      existingUser.avatar = {url, public_id};
+      existingUser.save();
+    }
+
+    res.json({
+      data: {
+        message: 'Uploading avatar is successful',
       },
     });
   },

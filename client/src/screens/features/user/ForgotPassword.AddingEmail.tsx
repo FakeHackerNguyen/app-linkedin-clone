@@ -54,7 +54,7 @@ export default function ForgotPasswordAddingEmail({
       return setErrors(error);
     }
 
-    navigation.replace('VerifyingEmail');
+    navigation.replace('VerifyingEmail', {email: emailPhone});
   };
 
   return (

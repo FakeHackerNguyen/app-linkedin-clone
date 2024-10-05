@@ -1,4 +1,5 @@
 import {Types, Document} from 'mongoose';
+import {Education, Experience} from '../../index';
 
 export enum UserRole {
   USER = 'USER',
@@ -22,29 +23,8 @@ export default interface IUser extends Document {
     public_id: string;
   };
   headline: string;
-  educations: Array<{
-    school: Types.ObjectId;
-    fieldOfStudy: string;
-    degree: string;
-    grade: number;
-    activities: string;
-    description: string;
-    skills: Array<string>;
-    startEducation: Date;
-    endEducation: Date;
-  }>;
-  experiences: Array<{
-    company: Types.ObjectId;
-    jobTitle: string;
-    typeEmployment: string;
-    description: string;
-    location: string;
-    locationType: string;
-    industry: string;
-    skills: Array<string>;
-    startWork: Date;
-    endWork: Date;
-  }>;
+  educations: Array<Education>;
+  experiences: Array<Experience>;
   email: string;
   password: string;
   role: string;

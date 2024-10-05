@@ -7,15 +7,15 @@ import ForgotPasswordConfirmPassword from '../screens/features/user/ForgotPasswo
 
 export type ForgotPasswordStackParams = {
   AddingEmail: undefined;
-  VerifyingEmail: undefined;
-  ConfirmPassword: undefined;
+  VerifyingEmail: {email: string};
+  ConfirmPassword: {code: string; email: string};
 };
 
 const Stack = createNativeStackNavigator<ForgotPasswordStackParams>();
 
 export default function ForgotPasswordNavigator(): React.JSX.Element {
   return (
-    <Stack.Navigator initialRouteName="ConfirmPassword">
+    <Stack.Navigator initialRouteName="AddingEmail">
       <Stack.Screen
         name="AddingEmail"
         options={{headerShown: false}}

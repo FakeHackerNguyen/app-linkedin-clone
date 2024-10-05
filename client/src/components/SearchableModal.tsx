@@ -141,7 +141,8 @@ export default function SearchableModal({
                         className="text-[#676767] font-semibold">
                         {modalType}
                       </Text>
-                      <View className="bg-[#676767] w-1 h-1 rounded-full" />
+                      {/* <View className="bg-[#676767] w-1 h-1 rounded-full" /> */}
+                      •
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
@@ -150,8 +151,8 @@ export default function SearchableModal({
                           fontSize: width * 0.038,
                         }}>
                         {modalType === 'Company'
-                          ? (item as Company).typeOfBusiness
-                          : (item as School).region}
+                          ? (item as Company).industry
+                          : (item as School).location}
                       </Text>
                     </View>
                   </View>

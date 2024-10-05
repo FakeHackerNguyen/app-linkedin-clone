@@ -8,10 +8,10 @@ import RegisterVerifyingEmail from '../screens/features/user/Register.VerifyingE
 
 export type RegisterStackParams = {
   AddingName: undefined;
-  AddingEmail: undefined;
-  AddingProfile: undefined;
-  AddingAvatar: undefined;
-  VerifyingEmail: undefined;
+  AddingEmail: {firstName: string; lastName: string};
+  AddingProfile: {email: string};
+  AddingAvatar: {email: string};
+  VerifyingEmail: {email: string};
 };
 
 const Stack = createNativeStackNavigator<RegisterStackParams>();

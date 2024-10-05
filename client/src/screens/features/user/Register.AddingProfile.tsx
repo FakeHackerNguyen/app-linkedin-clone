@@ -11,14 +11,12 @@ import {
   Pressable,
 } from 'react-native';
 import Logo from '../../../components/Logo.tsx';
-import {
-  getCompanies,
-  getJobTitles,
-  getLocations,
-  getUniversities,
-} from '../../../api/externalApi.ts';
+import {getJobTitles, getLocations} from '../../../api/externalApi.ts';
 import SearchableModal from '../../../components/SearchableModal.tsx';
-import DropDownArrow from '../../../components/DropDownArrow.tsx';
+import DropDownArrow from '../../../components/icons/DropDownArrow.tsx';
+import {RouteProp} from '@react-navigation/native';
+import {updateUser} from '../../../api/userApi.ts';
+import {searchCompany, searchUniversity} from '../../../api/searchApi.ts';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -28,7 +26,7 @@ export type Company = {
     url: string;
     public_id: string;
   };
-  typeOfBusiness: string;
+  industry: string;
 };
 export type School = {
   name: string;
@@ -36,7 +34,7 @@ export type School = {
     url: string;
     public_id: string;
   };
-  region: string;
+  location: string;
 };
 type Profile = {
   location: string;
@@ -56,7 +54,7 @@ const defaultProfile = {
       url: '',
       public_id: '',
     },
-    typeOfBusiness: '',
+    industry: '',
   },
   school: {
     name: '',
@@ -64,24 +62,23 @@ const defaultProfile = {
       url: '',
       public_id: '',
     },
-    region: '',
+    location: '',
   },
   startYear: '',
   endYear: '',
 };
 
-type NavigationProp = NativeStackNavigationProp<
-  RegisterStackParams,
-  'AddingEmail'
->;
+type AddingProfileProps = {
+  route: RouteProp<RegisterStackParams, 'AddingProfile'>;
+  navigation: NativeStackNavigationProp<RegisterStackParams, 'AddingProfile'>;
+};
 
 type ModalSearchableType = 'Location' | 'Job Title' | 'Company' | 'School';
 
 export default function RegisterAddingProfile({
+  route,
   navigation,
-}: {
-  navigation: NavigationProp;
-}): React.JSX.Element {
+}: AddingProfileProps): React.JSX.Element {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [query, setQuery] = useState('');
   const [suggestData, setSuggestData] = useState<(string | Company | School)[]>(
@@ -93,6 +90,7 @@ export default function RegisterAddingProfile({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isContinuePressed, setIsContinuePressed] = useState(false);
+  const {email} = route.params;
 
   const slideAnim = useRef(new Animated.Value(height)).current;
 
@@ -131,14 +129,37 @@ export default function RegisterAddingProfile({
     } else if (modalSearchType === 'Job Title') {
       res = await getJobTitles(value);
     } else if (modalSearchType === 'Company') {
-      res = await getCompanies(value);
+      res = await searchCompany(value);
     } else if (modalSearchType === 'School') {
-      res = await getUniversities(value);
+      res = await searchUniversity(value);
     }
 
     const data = res!.data;
     if (data) {
       return setSuggestData(data);
+    }
+  };
+
+  const handleNext = async () => {
+    if (isFormValid) {
+      const formData = new URLSearchParams();
+      formData.append('email', email);
+      formData.append('location', profile.location);
+      formData.append(
+        'experiences',
+        JSON.stringify([
+          {
+            company: profile.company,
+            jobTitle: profile.jobTitle,
+            location: profile.location,
+          },
+        ]),
+      );
+      const {errorMessage} = await updateUser(formData);
+
+      if (!errorMessage) {
+        return navigation.replace('AddingAvatar', {email});
+      }
     }
   };
 
@@ -367,7 +388,7 @@ export default function RegisterAddingProfile({
             borderRadius: width * 0.05,
           }}
           className="items-center justify-center"
-          onPress={() => navigation.replace('AddingAvatar')}
+          onPress={handleNext}
           onPressIn={() => setIsContinuePressed(true)}
           onPressOut={() => setIsContinuePressed(false)}>
           <Text

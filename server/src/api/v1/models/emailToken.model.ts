@@ -15,6 +15,10 @@ const emailTokenSchema = new Schema<IEmailToken>({
     enum: EmailType,
     required: true,
   },
+  for: {
+    type: String,
+    required: true,
+  },
   content: {
     type: String,
     required: function (): boolean {

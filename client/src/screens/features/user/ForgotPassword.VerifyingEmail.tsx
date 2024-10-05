@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -12,23 +12,27 @@ import Logo from '../../../components/Logo';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../../App';
 import {ForgotPasswordStackParams} from '../../../navigation/ForgotPasswordNavigator';
+import {sendOtp, verifyOtp} from '../../../api/userApi';
+import {RouteProp} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('screen');
 
-type NavigationProp = NativeStackNavigationProp<
-  RootStackParams & ForgotPasswordStackParams,
-  'AddingEmail'
->;
+type ForgotPasswordVerifyingEmailProps = {
+  route: RouteProp<ForgotPasswordStackParams, 'VerifyingEmail'>;
+  navigation: NativeStackNavigationProp<
+    RootStackParams & ForgotPasswordStackParams,
+    'VerifyingEmail'
+  >;
+};
 
 type Error = {
   code: string;
 };
 
 export default function ForgotPasswordVerifyingEmail({
+  route,
   navigation,
-}: {
-  navigation: NavigationProp;
-}): React.JSX.Element {
+}: ForgotPasswordVerifyingEmailProps): React.JSX.Element {
   const [isDonePressed, setIsDonePressed] = useState(false);
   const [code, setCode] = useState('');
   const [isContinuePressed, setIsContinuePressed] = useState(false);
@@ -36,7 +40,11 @@ export default function ForgotPasswordVerifyingEmail({
     code: '',
   });
 
-  const handleContinue = () => {
+  const {email} = route.params;
+
+  console.log(errors);
+
+  const handleContinue = async () => {
     let error: Error = {
       code: '',
     };
@@ -53,8 +61,25 @@ export default function ForgotPasswordVerifyingEmail({
       return setErrors(error);
     }
 
-    // navigation.replace('VerifyingEmail');
+    const {data} = await verifyOtp(email, code, 'Forgot Password');
+
+    if (data.isValid) {
+      return navigation.replace('ConfirmPassword', {code, email});
+    }
   };
+
+  const handleSendOtp = async () => {
+    const {errorMessage} = await sendOtp(email, 'Forgot Password');
+
+    if (!errorMessage) {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    handleSendOtp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View className="flex-1 bg-white">
@@ -95,7 +120,7 @@ export default function ForgotPasswordVerifyingEmail({
             style={{
               fontSize: width * 0.038,
             }}>
-            {`Check ${'i******@gmaial.com'} for a verification code.`}{' '}
+            {`Check ${email} for a verification code.`}{' '}
             <Text className="text-[#2D64BC] font-extrabold">Change</Text>
           </Text>
           <View className="mt-10">
@@ -123,15 +148,7 @@ export default function ForgotPasswordVerifyingEmail({
               value={code}
               onChangeText={(value: string) => setCode(value)}
             />
-            {errors.code ? (
-              <Text
-                style={{
-                  fontSize: width * 0.038,
-                }}
-                className="text-red-600 font-extrabold">
-                {errors.code}
-              </Text>
-            ) : null}
+
             <Text
               style={{
                 fontSize: width * 0.038,

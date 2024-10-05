@@ -6,13 +6,15 @@ import Login from './src/screens/features/user/Login.tsx';
 import RegisterNavigator from './src/navigation/RegisterNavigator.tsx';
 import ForgotPasswordNavigator from './src/navigation/ForgotPasswordNavigator.tsx';
 import {Provider} from 'react-redux';
-import {store} from './src/store.tsx';
+import {store} from './src/redux/store.tsx';
+import AppDrawerNavigator from './src/navigation/DrawerNavigation.tsx';
 
 export type RootStackParams = {
   Intro: undefined;
   Signin: undefined;
   Signup: undefined;
   ForgotPassword: undefined;
+  Main: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParams>();
@@ -21,7 +23,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Intro">
+        <Stack.Navigator initialRouteName="Main">
           <Stack.Screen
             name="Intro"
             options={{headerShown: false}}
@@ -46,6 +48,11 @@ function App(): React.JSX.Element {
               gestureEnabled: true,
               animation: 'slide_from_bottom',
             }}
+          />
+          <Stack.Screen
+            name="Main"
+            options={{headerShown: false}}
+            component={AppDrawerNavigator}
           />
         </Stack.Navigator>
       </NavigationContainer>

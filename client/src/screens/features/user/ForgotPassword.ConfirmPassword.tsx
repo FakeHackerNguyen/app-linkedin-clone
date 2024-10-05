@@ -12,13 +12,18 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../../App';
 import {ForgotPasswordStackParams} from '../../../navigation/ForgotPasswordNavigator';
 import InputFloatingLabel from '../../../components/InputFloatingLabel';
+import {resetPassword} from '../../../api/userApi';
+import {RouteProp} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('screen');
 
-type NavigationProp = NativeStackNavigationProp<
-  RootStackParams & ForgotPasswordStackParams,
-  'AddingEmail'
->;
+type ForgotPasswordcConfirmPasswordProps = {
+  route: RouteProp<ForgotPasswordStackParams, 'ConfirmPassword'>;
+  navigation: NativeStackNavigationProp<
+    RootStackParams & ForgotPasswordStackParams,
+    'ConfirmPassword'
+  >;
+};
 
 type Error = {
   newPassword: string;
@@ -26,10 +31,9 @@ type Error = {
 };
 
 export default function ForgotPasswordConfirmPassword({
+  route,
   navigation,
-}: {
-  navigation: NavigationProp;
-}): React.JSX.Element {
+}: ForgotPasswordcConfirmPasswordProps): React.JSX.Element {
   const [isDonePressed, setIsDonePressed] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -40,7 +44,9 @@ export default function ForgotPasswordConfirmPassword({
     confirmNewPassword: '',
   });
 
-  const handleContinue = () => {
+  const {code, email} = route.params;
+
+  const handleContinue = async () => {
     let error: Error = {
       newPassword: '',
       confirmNewPassword: '',
@@ -64,7 +70,18 @@ export default function ForgotPasswordConfirmPassword({
       return setErrors(error);
     }
 
-    // navigation.replace('VerifyingEmail');
+    const {errorMessage} = await resetPassword(
+      email,
+      code,
+      'Forgot Password',
+      newPassword,
+    );
+
+    if (!errorMessage) {
+      return navigation.replace('Signin');
+    }
+
+    console.log(errorMessage);
   };
 
   return (

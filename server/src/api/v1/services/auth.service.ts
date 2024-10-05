@@ -1,6 +1,5 @@
-import jwt, {JwtPayload} from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import authToken from '../models/authToken.model';
-import userModel from '../models/user.model';
 import IUser from '../interfaces/feature/user/user.interface';
 import {IAuthToken} from '../interfaces/feature/auth/token.interface';
 

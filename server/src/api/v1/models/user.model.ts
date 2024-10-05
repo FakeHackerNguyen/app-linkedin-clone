@@ -88,29 +88,29 @@ const userSchema = new Schema<IUser>({
   //       _id: false, // remove _id from subdocument
   //     },
   //   ],
-  //   experiences: [
-  //     {
-  //       company: {
-  //         type: Schema.Types.ObjectId,
-  //         ref: 'Company',
-  //       },
-  //       jobTitle: String,
-  //       typeEmployment: String,
-  //       description: String,
-  //       location: String,
-  //       locationType: String,
-  //       industry: String,
-  //       skills: [
-  //         {
-  //           type: String,
-  //           trim: true,
-  //         },
-  //       ],
-  //       startWork: Date,
-  //       endWork: Date,
-  //       _id: false, // remove _id from subdocument
-  //     },
-  //   ],
+  experiences: [
+    {
+      type: Object,
+      company: {
+        type: Schema.Types.ObjectId,
+        ref: 'Company',
+      },
+      jobTitle: String,
+      employmentType: String,
+      description: String,
+      location: String,
+      locationType: String,
+      skills: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      startWork: Date,
+      endWork: Date,
+      _id: false, // remove _id from subdocument
+    },
+  ],
   email: {
     type: String,
     required: true,
@@ -120,6 +120,10 @@ const userSchema = new Schema<IUser>({
   password: {
     type: String,
     required: true,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
   },
   role: {
     type: String,
@@ -144,4 +148,5 @@ userSchema.methods.comparePassword = function (password: string): boolean {
   return originalPassHash === currentPassHash;
 };
 
+userSchema.index({fullName: 'text'});
 export default model<IUser>('User', userSchema);
