@@ -10,9 +10,10 @@ import {
   View,
   Image,
 } from 'react-native';
-import {Company, School} from '../screens/features/user/Register.AddingProfile';
+import {Company, School} from '../types';
 
 const {height, width} = Dimensions.get('screen');
+
 type SearchableModalProps = {
   slideAnim: Animated.Value;
   isModalVisible: boolean;
@@ -23,6 +24,7 @@ type SearchableModalProps = {
   data: (string | Company | School)[];
   onSelect: (item: string | Company | School) => void;
 };
+
 let placeholder: string;
 
 export default function SearchableModal({
@@ -141,8 +143,7 @@ export default function SearchableModal({
                         className="text-[#676767] font-semibold">
                         {modalType}
                       </Text>
-                      {/* <View className="bg-[#676767] w-1 h-1 rounded-full" /> */}
-                      •
+                      <View className="bg-[#676767] w-1 h-1 rounded-full" />
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"

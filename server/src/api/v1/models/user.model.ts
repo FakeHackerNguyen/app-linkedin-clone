@@ -46,8 +46,8 @@ const userSchema = new Schema<IUser>({
       required: true,
     },
     default: {
-      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1709004468/avatars/default-avatar.png',
-      public_id: 'avatars/default-avatar.png',
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1709004468/avatars/cover',
+      public_id: 'avatars/cover',
     },
   },
   avatar: {
@@ -62,44 +62,55 @@ const userSchema = new Schema<IUser>({
     },
     default: {
       url: 'https://res.cloudinary.com/myshop-it/image/upload/v1709004468/avatars/default-avatar.png',
-      public_id: 'avatars/default-avatar.png',
+      public_id: 'avatars/default-avatar',
     },
   },
-  //   educations: [
-  //     {
-  //       school: {
-  //         type: Schema.Types.ObjectId,
-  //         ref: 'University',
-  //       },
-  //       fieldOfStudy: String,
-  //       degree: String,
-  //       grade: Number,
-  //       activities: String,
-  //       description: String,
-  //       skills: [
-  //         {
-  //           type: String,
-  //           trim: true,
-  //         },
-  //       ],
+  educations: [
+    {
+      type: Object,
+      school: {
+        type: Object,
+        avatar: {
+          type: Object,
+          url: String,
+          public_id: String,
+        },
+        name: String,
+        location: String,
+      },
+      fieldOfStudy: String,
+      degree: String,
+      grade: Number,
+      activities: String,
+      description: String,
+      skills: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
 
-  //       startEducation: Date,
-  //       endEducation: Date,
-  //       _id: false, // remove _id from subdocument
-  //     },
-  //   ],
+      startStudy: Date,
+      endStudy: Date,
+      _id: false, // remove _id from subdocument
+    },
+  ],
   experiences: [
     {
       type: Object,
       company: {
-        type: Schema.Types.ObjectId,
-        ref: 'Company',
+        type: Object,
+        avatar: {
+          type: Object,
+          url: String,
+          public_id: String,
+        },
+        name: String,
+        typeOfBusiness: String,
       },
       jobTitle: String,
       employmentType: String,
       description: String,
-      location: String,
-      locationType: String,
       skills: [
         {
           type: String,

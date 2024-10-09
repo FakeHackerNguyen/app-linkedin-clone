@@ -43,6 +43,14 @@ export default function RegisterVerifyingEmail({
   const {email} = route.params;
 
   const handleSendOtp = async () => {
+    const {errorMessage} = await sendOtp(email, 'Sign Up');
+
+    if (!errorMessage) {
+      return;
+    }
+  };
+
+  const handleNext = async () => {
     let error: Error = {
       code: '',
     };
@@ -59,15 +67,8 @@ export default function RegisterVerifyingEmail({
       return setErrors(error);
     }
 
-    const {errorMessage} = await sendOtp(email, 'Sign Up');
-
-    if (!errorMessage) {
-      return;
-    }
-  };
-
-  const handleNext = async () => {
     const {data} = await verifyOtp(email, code, 'Sign Up');
+    console.log(data);
 
     if (data.isValid) {
       return navigation.replace('Signin');
@@ -104,7 +105,7 @@ export default function RegisterVerifyingEmail({
             style={{
               fontSize: width * 0.04,
             }}>
-            {`We sent the verification code to ${'hotdogtest1@hotmail.com'}. `}
+            {`We sent the verification code to ${email}. `}
             <Text className="font-extrabold">Edit email</Text>
           </Text>
 

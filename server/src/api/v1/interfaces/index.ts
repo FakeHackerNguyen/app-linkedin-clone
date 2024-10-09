@@ -33,7 +33,7 @@ export type Education = {
       public_id: string;
     };
     name: string;
-    region: string;
+    location: string;
   };
   fieldOfStudy?: string;
   degree?: string;
@@ -41,6 +41,6 @@ export type Education = {
   activities?: string;
   description?: string;
   skills?: Array<string>;
-  startEducation: Date;
-  endEducation: Date;
+  startStudy?: Date;
+  endStudy?: Date;
 };

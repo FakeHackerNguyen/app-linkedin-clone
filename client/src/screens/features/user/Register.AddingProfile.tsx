@@ -17,53 +17,24 @@ import DropDownArrow from '../../../components/icons/DropDownArrow.tsx';
 import {RouteProp} from '@react-navigation/native';
 import {updateUser} from '../../../api/userApi.ts';
 import {searchCompany, searchUniversity} from '../../../api/searchApi.ts';
+import {Company, School} from '../../../types/index.ts';
 
 const {width, height} = Dimensions.get('screen');
 
-export type Company = {
-  name: string;
-  avatar: {
-    url: string;
-    public_id: string;
-  };
-  industry: string;
-};
-export type School = {
-  name: string;
-  avatar: {
-    url: string;
-    public_id: string;
-  };
-  location: string;
-};
 type Profile = {
   location: string;
   jobTitle?: string;
-  company?: Company;
-  school?: School;
-  startYear?: string;
-  endYear?: string;
+  company?: Company | null;
+  school?: School | null;
+  startStudy?: string;
+  endStudy?: string;
 };
 
 const defaultProfile = {
   location: '',
   jobTitle: '',
-  company: {
-    name: '',
-    avatar: {
-      url: '',
-      public_id: '',
-    },
-    industry: '',
-  },
-  school: {
-    name: '',
-    avatar: {
-      url: '',
-      public_id: '',
-    },
-    location: '',
-  },
+  company: null,
+  school: null,
   startYear: '',
   endYear: '',
 };
@@ -142,23 +113,47 @@ export default function RegisterAddingProfile({
 
   const handleNext = async () => {
     if (isFormValid) {
-      const formData = new URLSearchParams();
-      formData.append('email', email);
-      formData.append('location', profile.location);
-      formData.append(
-        'experiences',
-        JSON.stringify([
-          {
-            company: profile.company,
-            jobTitle: profile.jobTitle,
-            location: profile.location,
-          },
-        ]),
-      );
-      const {errorMessage} = await updateUser(formData);
+      if (profile.company) {
+        const formData = new URLSearchParams();
+        formData.append('email', email);
+        formData.append('location', profile.location);
 
-      if (!errorMessage) {
-        return navigation.replace('AddingAvatar', {email});
+        if (profile.company) {
+          formData.append(
+            'headline',
+            `${profile.jobTitle} at ${profile.company.name}`,
+          );
+          formData.append(
+            'experiences',
+            JSON.stringify([
+              {
+                company: profile.company,
+                jobTitle: profile.jobTitle,
+                location: profile.location,
+              },
+            ]),
+          );
+        }
+
+        if (profile.school) {
+          formData.append('headline', `Student at ${profile.school.name}`);
+          formData.append(
+            'educations',
+            JSON.stringify([
+              {
+                school: profile.school,
+                startStudy: profile.startStudy,
+                endStudy: profile.endStudy,
+              },
+            ]),
+          );
+        }
+
+        const {errorMessage} = await updateUser(formData);
+
+        if (!errorMessage) {
+          return navigation.replace('AddingAvatar', {email});
+        }
       }
     }
   };
@@ -174,9 +169,7 @@ export default function RegisterAddingProfile({
     setIsFormValid(true);
   }, [isEnabeldSwitch, profile]);
 
-  console.log(`Register.AddingProfile: {modalType: ${modalSearchType}}`);
   console.log(profile);
-  console.log(isFormValid);
 
   return (
     <View className="flex-1 bg-white">
@@ -289,7 +282,7 @@ export default function RegisterAddingProfile({
                 autoCorrect={false}
                 editable={false}
                 pointerEvents="none"
-                value={profile.company!.name}
+                value={profile.company?.name || ''}
               />
             </Pressable>
           </View>
@@ -344,7 +337,7 @@ export default function RegisterAddingProfile({
                   pointerEvents="none"
                   value={profile.jobTitle}
                 />
-                <DropDownArrow />
+                <DropDownArrow width={40} height={40} />
               </Pressable>
             </View>
             <View className="flex-1">
@@ -368,7 +361,7 @@ export default function RegisterAddingProfile({
                   pointerEvents="none"
                   value={profile.jobTitle}
                 />
-                <DropDownArrow />
+                <DropDownArrow width={40} height={40} />
               </Pressable>
             </View>
           </View>

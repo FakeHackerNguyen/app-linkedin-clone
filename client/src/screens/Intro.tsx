@@ -15,6 +15,10 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import slides from '../data/slides.js';
 import Logo from '../components/Logo';
 import {RootStackParams} from '../../App.js';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, Store} from '../redux/store.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {isAuth} from '../redux/actions/authAction';
 
 type Slide = {
   _id: number;
@@ -125,6 +129,24 @@ function Slider(): React.JSX.Element {
 function Intro({navigation}: {navigation: NavigationProp}): React.JSX.Element {
   const [isSignupPressed, setIsSignupPressed] = useState(false);
   const [isSigninPressed, setIsSignInPressed] = useState(false);
+
+  const dispatch: AppDispatch = useDispatch();
+  const {user} = useSelector((state: Store) => state.auth);
+
+  useEffect(() => {
+    const auth = async () => {
+      const accessToken = (await AsyncStorage.getItem('accessToken')) as string;
+      await dispatch(isAuth({accessToken}));
+      console.log(accessToken);
+    };
+    auth();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      navigation.replace('Main');
+    }
+  }, [user, navigation]);
 
   console.log(
     `Intro Screen: { isSignupPressed: ${isSignupPressed}}, isSigninPressed: ${isSigninPressed} }`,

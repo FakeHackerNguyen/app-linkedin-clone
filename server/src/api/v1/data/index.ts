@@ -62,9 +62,6 @@ export const LocalLocation = [
   'Kiến Xương, Thai Binh, Vietnam',
   'Thái Thụy, Thai Binh, Vietnam',
   'Quỳnh Phụ, Thai Binh, Vietnam',
-  'Kiến Xương, Thai Binh, Vietnam',
-  'Phú Bình, Thai Nguyen, Vietnam',
-  'Phổ Yên, Thai Nguyen, Vietnam',
   'Phú Bình, Thai Nguyen, Vietnam',
   'Binh Dinh, Thai Binh, Vietnam',
   'Diêm Điền, Thai Binh, Vietnam',
@@ -139,6 +136,29 @@ export const LocalLocation = [
   'Tân An, Ca Mau, Vietnam',
   'Hồ Thị Kỷ, Ca Mau, Vietnam',
   'Phú Tân, Ca Mau, Vietnam',
+  'Los Angeles, California, United States',
+  'Santa Clara, California, United States',
+  'San Diego, California, United States',
+  'Orange, California, United States',
+  'San Francisco, California, United States',
+  'Alameda, California, United States',
+  'Riverside, California, United States',
+  'Sacramento, California, United States',
+  'San Bernardino, California, United States',
+  'San Jose, California, United States',
+  'San Mateo, California, United States',
+  'Contra Costa, California, United States',
+  'Mountain View, California, United States',
+  'Ventura, California, United States',
+  'Fresno, California, United States',
+  'Harris, Texas, United States',
+  'Dallas, Texas, United States',
+  'Houston, Texas, United States',
+  'Travis, Texas, United States',
+  'Tarrant, Texas, United States',
+  'Austin, Texas, United States',
+  'Bexar, Texas, United States',
+  'San Antonio, Texas, United States',
 ];
 export const JobTitle = [
   'Assistant',
@@ -162,7 +182,6 @@ export const JobTitle = [
   'Compiler Engineer',
   'Customer Service Specialist',
   'Computer Programmer',
-  'Kitchen Cabinet Specialist',
   'C++ Developer',
   'Company Owner',
   'Director',
@@ -261,6 +280,37 @@ export const JobTitle = [
   'Mulesoft Developer',
   'Sales Floor Team Member',
   'Assistant Manager',
+  'Management Director',
+  'Clinic Registered Nurse',
+  'Professional Nurse',
+  'Network Specialist',
+  'Certified Nursing Assistant',
+  'Self Employed',
+  'Network Engineer',
+  'National Account Specialist',
+  'National Sales Specialist',
+  'Internet Network Specialist',
+  'Network Professional',
+  'Observer',
+  'Nanny',
+  'SAP Analyst',
+  'Attorney',
+  'Ambassador',
+  'Advisor',
+  'Substance Abuse Counselor',
+  'Behavioral Therapist',
+  'Network Expert',
+  'abinitio developer',
+  'Study Abroad Advisor',
+  'Substance Abuse Control Officer',
+  'Clinical Data Abstractor',
+  'Abbott',
+  'Abbess',
+  'Nurse',
+  'Network Administrator',
+  'ETL Developer',
+  'Abrasive Blasting Technician',
+  'On Leave',
 ];
 export const Companies = [
   {
@@ -1071,6 +1121,166 @@ export const Companies = [
     name: 'Oil and Gas',
     industry: 'Oil and Gas',
   },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728140466/companies/visa.jpg',
+      public_id: 'visa',
+    },
+    name: 'Visa',
+    industry: 'IT Services and IT Consulting',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728140730/companies/vietteldigital.jpg',
+      public_id: 'vietteldigital',
+    },
+    name: 'Viettel Digital',
+    industry: 'IT Services and IT Consulting',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728140813/companies/vietnamworks.jpg',
+      public_id: 'vietnamworks',
+    },
+    name: 'VietnamWorks',
+    industry: 'Human Resources Services',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728140993/companies/pwcvietnam.jpg',
+      public_id: 'pwcvietnam',
+    },
+    name: 'PwC Vietnam',
+    industry: 'Accounting',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728141638/companies/sccvietnam.jpg',
+      public_id: 'sccvietnam',
+    },
+    name: 'SCC Vietnam',
+    industry: ' IT Services and IT Consulting',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728141857/companies/vietnamairlines.jpg',
+      public_id: 'vietnamairlines',
+    },
+    name: 'Vietnam Airlines',
+    industry: 'Airlines and Aviation',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728141997/companies/vnf.jpg',
+      public_id: 'vnf',
+    },
+    name: 'Vietnam Food',
+    industry: 'Biotechnology',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728142072/companies/gs25vietnam.jpg',
+      public_id: 'gs25vietnam',
+    },
+    name: 'GS25 Vietnam',
+    industry: 'Retail',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728142196/companies/heinekenvietnam.jpg',
+      public_id: 'heinekenvietnam',
+    },
+    name: 'HEINEKEN Vietnam',
+    industry: 'Food and Beverage Services',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728142299/companies/bbvvietnam.jpg',
+      public_id: 'bbvvietnam',
+    },
+    name: 'bbv Vietnam',
+    industry: 'IT Services and IT Consulting',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728142431/companies/kfcvietnam.jpg',
+      public_id: 'kfcvietnam',
+    },
+    name: 'KFC Vietnam',
+    industry: ' Food and Beverage Services',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728142515/companies/urcvietnam.jpg',
+      public_id: 'urcvietnam',
+    },
+    name: 'URC Vietnam',
+    industry: ' Food and Beverage Services',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728142662/companies/cgpvietnam.jpg',
+      public_id: 'cgpvietnam',
+    },
+    name: 'CGP Vietnam',
+    industry: 'Staffing and Recruiting',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728143286/companies/sunasterisk.jpg',
+      public_id: 'sunasterisk',
+    },
+    name: 'Sun* Vietnam',
+    industry: 'Information Technology & Services',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728141746/companies/sccvienamconsumergoods.jpg',
+      public_id: 'sccvienamconsumergoods',
+    },
+    name: 'SCC-VIETNAM Consumer Goods Co., Ltd',
+    industry: 'Consumer Services',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728143455/companies/suntoursvietnam.jpg',
+      public_id: 'suntoursvietnam',
+    },
+    name: 'Sun Tours Vietnam',
+    industry: 'Travel Arrangements',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728143619/companies/nousbysunlifevietnam.jpg',
+      public_id: 'nousbysunlifevietnam',
+    },
+    name: 'NOUS by Sun Life VietNam',
+    industry: 'Insurance',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728143721/companies/sunminvietnam.jpg',
+      public_id: 'sunminvietnam',
+    },
+    name: 'Sun Min Vietnam',
+    industry: 'Manufacturing',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728143952/companies/sungetawaysvietnamtravel.jpg',
+      public_id: 'sungetawaysvietnamtravel',
+    },
+    name: 'Sun Getaways Vietnam Travel',
+    industry: 'Travel Arrangements',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728144244/companies/vietnamsunhandicraftscompanylimited.jpg',
+      public_id: 'vietnamsunhandicraftscompanylimited',
+    },
+    name: ' VIETNAM SUN HANDICRAFTS COMPANY LIMITED',
+    industry: 'Consumer Goods',
+  },
 ];
 export const Universities = [
   {
@@ -1873,4 +2083,204 @@ export const Universities = [
     name: 'Vietnam-The Netherlands Programme (VNP)',
     location: 'Viet Nam',
   },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728147436/universities/prattinstitute.jpg',
+      public_id: 'prattinstitute',
+    },
+    name: 'Pratt Institute',
+    location: 'United States',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728147704/universities/birlainstituteoftechnologyandsciencepilanilogo.jpg',
+      public_id: 'birlainstituteoftechnologyandsciencepilanilogo',
+    },
+    name: 'Birla Institute of Technology and Science, Pilani',
+    location: 'India',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728145178/universities/vietnamlogisticsandaviationschool.jpg',
+      public_id: 'vietnamlogisticsandaviationschool',
+    },
+    name: 'Vietnam Logistics and Aviation School',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728147986/universities/politechnika.jpg',
+      public_id: 'politechnika',
+    },
+    name: 'Lodz University of Technology',
+    location: 'Poland',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728146645/universities/bankingacademyofvietnam.jpg',
+      public_id: 'bankingacademyofvietnam',
+    },
+    name: 'Banking Academy of Vietnam',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728148204/universities/rwthaachenuniversity.jpg',
+      public_id: 'rwthaachenuniversity',
+    },
+    name: 'RWTH Aachen University',
+    location: 'Germany',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728148366/universities/aarhusuniversity.jpg',
+      public_id: 'aarhusuniversity',
+    },
+    name: 'Aarhus University',
+    location: 'Denmark',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728146870/universities/academyoffinancehanoivietnam.jpg',
+      public_id: 'academyoffinancehanoivietnam',
+    },
+    name: 'Academy of Finance, Hanoi, Vietnam',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728146991/universities/baatrainingvietnamlogo.jpg',
+      public_id: 'baatrainingvietnamlogo',
+    },
+    name: 'BAA Training Vietnam',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728148644/universities/addisababauniversity.jpg',
+      public_id: 'addisababauniversity',
+    },
+    name: 'Addis Ababa University',
+    location: 'Ethiopia',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728146633/universities/advancedprogrambankingacademyofvietnam.jpg',
+      public_id: 'advancedprogrambankingacademyofvietnam',
+    },
+    name: 'Advanced Program, Banking Academy of Vietnam',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728148813/universities/aaaschoolofadvertising.jpg',
+      public_id: 'aaaschoolofadvertising',
+    },
+    name: 'AAA School of Advertising',
+    location: 'South Africa',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728148946/universities/fhaachenlogo.jpg',
+      public_id: 'fhaachenlogo',
+    },
+    name: 'FH Aachen University of Applied Sciences',
+    location: 'Germany',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728146344/universities/vietnamnationaluniversityhcmcangianguniversity.jpg',
+      public_id: 'vietnamnationaluniversityhcmcangianguniversity',
+    },
+    name: 'Vietnam National University HCMC An Giang University',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728149228/universities/abrsm.jpg',
+      public_id: 'abrsm',
+    },
+    name: 'ABRSM',
+    location: 'United Kingdom',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728149339/universities/abesengineeringcollege.jpg',
+      public_id: 'abesengineeringcollege',
+    },
+    name: 'ABES Engineering College',
+    location: 'India',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728145792/universities/diplomaticacademyofvietnam.jpg',
+      public_id: 'diplomaticacademyofvietnam',
+    },
+    name: 'Diplomatic Academy of Vietnam',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728149430/universities/aberystwythuniversitylogo.jpg',
+      public_id: 'aberystwythuniversitylogo',
+    },
+    name: 'Aberystwyth University',
+    location: 'United Kingdom',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728145983/universities/vietnamkoreauniversityofinformationandcommunicationtechnology.jpg',
+      public_id:
+        'vietnamkoreauniversityofinformationandcommunicationtechnology',
+    },
+    name: 'Vietnam - Korea University of Information and Communication Technology',
+    location: 'Viet Nam',
+  },
+  {
+    avatar: {
+      url: 'https://res.cloudinary.com/myshop-it/image/upload/v1728149078/universities/aalenuniversitylogo.jpg',
+      public_id: 'aalenuniversitylogo',
+    },
+    name: 'Aalen University',
+    location: 'Germany',
+  },
 ];
+
+function check(): boolean {
+  for (let i = 0; i < LocalLocation.length - 1; i++) {
+    for (let j = i + 1; j < LocalLocation.length; j++) {
+      if (LocalLocation[i] === LocalLocation[j]) {
+        console.log(`Location: ${LocalLocation[i]}`);
+        return false;
+      }
+    }
+  }
+  for (let i = 0; i < JobTitle.length - 1; i++) {
+    for (let j = i + 1; j < JobTitle.length; j++) {
+      if (JobTitle[i] === JobTitle[j]) {
+        console.log(`JobTitle: ${JobTitle[i]}`);
+
+        return false;
+      }
+    }
+  }
+  for (let i = 0; i < Companies.length - 1; i++) {
+    for (let j = i + 1; j < Companies.length; j++) {
+      if (Companies[i].name === Companies[j].name) {
+        console.log(`Companies: ${Companies[i].name}`);
+        return false;
+      }
+    }
+  }
+  for (let i = 0; i < Universities.length - 1; i++) {
+    for (let j = i + 1; j < Universities.length; j++) {
+      if (Universities[i].name === Universities[j].name) {
+        console.log(`Universities: ${Universities[i].name}`);
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+console.log(check());

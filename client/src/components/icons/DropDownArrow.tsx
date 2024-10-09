@@ -1,9 +1,17 @@
 import React from 'react';
 import {Svg, Polygon, Path} from 'react-native-svg';
 
-export default function DropDownArrow(): React.JSX.Element {
+type Props = {
+  width: number;
+  height: number;
+};
+
+export default function DropDownArrow({
+  width,
+  height,
+}: Props): React.JSX.Element {
   return (
-    <Svg width="40" height="40" viewBox="0 0 24 24">
+    <Svg width={width} height={height} viewBox="0 0 24 24">
       <Path
         fill="none"
         stroke="currentColor"

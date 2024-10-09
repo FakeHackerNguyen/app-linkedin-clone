@@ -1,7 +1,7 @@
 import {Types} from 'mongoose';
 import userModel from '../models/user.model';
 import IUser from '../interfaces/feature/user/user.interface';
-import {Experience} from '../interfaces';
+import {Education, Experience} from '../interfaces';
 import EmailService from './email.service';
 import emailTokenModel from '../models/emailToken.model';
 
@@ -23,13 +23,28 @@ export default class UserService {
   static async updateUser(
     email: string,
     location: string,
+    headline: string,
     experiences: Array<Experience>,
+    educations: Array<Education>,
   ): Promise<boolean> {
     const existingUser = await this.getUserByEmail(email);
     if (!existingUser) return false;
 
     existingUser.location = location;
-    existingUser.experiences = experiences;
+    if (headline) existingUser.headline = headline;
+    if (experiences) {
+      existingUser.experiences = experiences;
+    }
+    if (educations) {
+      existingUser.educations = educations.map(e => {
+        return {
+          school: e.school,
+          startStudy: e.startStudy ? new Date(e.startStudy) : undefined,
+          endStudy: e.endStudy ? new Date(e.endStudy) : undefined,
+        };
+      });
+    }
+
     await existingUser.save();
     return true;
   }

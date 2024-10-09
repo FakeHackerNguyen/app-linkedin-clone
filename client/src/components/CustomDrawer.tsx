@@ -1,18 +1,21 @@
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
-  DrawerItemList,
 } from '@react-navigation/drawer';
 import React, {useState} from 'react';
 import {View, Text, Image, Dimensions, Pressable} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SettingIcon from './icons/SettingIcon';
+import {Store} from '../redux/store';
+import {useSelector} from 'react-redux';
 
-const {width, height} = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
   const [isSettingsPressed, setIsSettingsPressed] = useState(false);
   const {navigation} = props;
+
+  const {user} = useSelector((state: Store) => state.auth);
 
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -27,7 +30,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
             style={{width: width * 0.15, height: width * 0.15}}
             className="rounded-full"
             source={{
-              uri: 'https://res.cloudinary.com/myshop-it/image/upload/v1709004468/avatars/default-avatar.png',
+              uri: user?.avatar.url,
             }}
           />
           <Text
@@ -35,9 +38,10 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
               fontSize: width * 0.05,
             }}
             className="text-black font-extrabold mt-2">
-            Nguyen Toan
+            {user?.fullName}
           </Text>
           <Text
+            onPress={() => navigation.navigate('Profile', {idUser: user?._id})}
             style={{
               fontSize: width * 0.035,
             }}

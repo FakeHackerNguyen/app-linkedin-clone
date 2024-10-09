@@ -1,4 +1,4 @@
-import PageService from '../services/page.service';
+import SearchService from '../services/search.service';
 import UserService from '../services/user.service';
 import {shuffleArray} from '../utils';
 import catchAsyncError from '../utils/catchAsyncError';
@@ -8,27 +8,38 @@ export const searchCommon = catchAsyncError(async (req, res, next) => {
   let combinedResults = [];
 
   if (q) {
-    const companies = await PageService.getCompaniesByName(q as string);
-    const universities = await PageService.getUniversitiesByName(q as string);
+    const companies = await SearchService.getCompaniesByName(q as string);
+    const universities = await SearchService.getUniversitiesByName(q as string);
     const users = await UserService.getUsersByName(q as string);
 
     combinedResults = [
       ...users.map(e => ({
         type: 'User',
-        fullName: e.fullName,
-        avatar: e.avatar,
+        data: {
+          _id: e._id,
+          fullName: e.fullName,
+          experiences: e.experiences,
+          educations: e.educations,
+          avatar: e.avatar,
+        },
       })),
       ...companies.map(e => ({
         type: 'Company',
-        name: e.name,
-        avatar: e.avatar,
-        industry: e.industry,
+        data: {
+          _id: e._id,
+          name: e.name,
+          avatar: e.avatar,
+          industry: e.industry,
+        },
       })),
       ...universities.map(e => ({
         type: 'University',
-        name: e.name,
-        avatar: e.avatar,
-        location: e.location,
+        data: {
+          _id: e._id,
+          name: e.name,
+          avatar: e.avatar,
+          location: e.location,
+        },
       })),
     ];
 
@@ -43,7 +54,7 @@ export const searchCommon = catchAsyncError(async (req, res, next) => {
 export const searchCompany = catchAsyncError(async (req, res, next) => {
   const {q} = req.query;
 
-  const companies = await PageService.getCompaniesByName(q as string);
+  const companies = await SearchService.getCompaniesByName(q as string);
 
   res.status(200).json({
     data: companies,
@@ -53,7 +64,7 @@ export const searchCompany = catchAsyncError(async (req, res, next) => {
 export const searchUniversity = catchAsyncError(async (req, res, next) => {
   const {q} = req.query;
 
-  const universities = await PageService.getUniversitiesByName(q as string);
+  const universities = await SearchService.getUniversitiesByName(q as string);
 
   res.status(200).json({
     data: universities,

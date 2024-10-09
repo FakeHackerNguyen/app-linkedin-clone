@@ -13,6 +13,8 @@ import ChatIcon from './icons/ChatIcon';
 import EditIcon from './icons/EditIcon';
 import BackIcon from './icons/BackIcon';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {useSelector} from 'react-redux';
+import {Store} from '../redux/store';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -31,6 +33,8 @@ export default function CustomHeaderDrawer({
   isSearchFocus,
   setIsSearchFocus,
 }: CustomHeaderDrawerProps): React.JSX.Element {
+  const {user} = useSelector((state: Store) => state.auth);
+
   return (
     <SafeAreaView className="bg-white">
       <View
@@ -42,6 +46,9 @@ export default function CustomHeaderDrawer({
               setIsSearchFocus(false);
               setQuery('');
               Keyboard.dismiss();
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              }
             }}>
             <BackIcon />
           </Pressable>
@@ -51,7 +58,7 @@ export default function CustomHeaderDrawer({
               style={{width: width * 0.08, height: width * 0.08}}
               className="rounded-full"
               source={{
-                uri: 'https://res.cloudinary.com/myshop-it/image/upload/v1709004468/avatars/default-avatar.png',
+                uri: user?.avatar.url,
               }}
             />
           </Pressable>

@@ -23,7 +23,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Main">
+        <Stack.Navigator initialRouteName="Intro">
           <Stack.Screen
             name="Intro"
             options={{headerShown: false}}

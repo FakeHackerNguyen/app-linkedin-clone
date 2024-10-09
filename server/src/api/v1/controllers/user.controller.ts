@@ -6,6 +6,7 @@ import EmailService from '../services/email.service';
 import AuthService from '../services/auth.service';
 import {CustomRequest} from '../interfaces';
 import cloudinary from '../../../config/cloudinary';
+import {formatUser} from '../utils';
 
 export const login = catchAsyncError(async (req, res, next) => {
   const {email, password} = req.body;
@@ -43,7 +44,7 @@ export const login = catchAsyncError(async (req, res, next) => {
     data: {
       accessToken,
       accessTokenUpdateAt: new Date().toLocaleString(),
-      user: existingUser,
+      user: formatUser(existingUser),
     },
   });
 });
@@ -181,9 +182,15 @@ export const resetPassword = catchAsyncError(
 );
 
 export const updateInfoUser = catchAsyncError(async (req, res, next) => {
-  const {email, location, experiences, educations} = req.body;
+  const {email, location, headline, experiences, educations} = req.body;
 
-  const isSuccess = await UserService.updateUser(email, location, experiences);
+  const isSuccess = await UserService.updateUser(
+    email,
+    location,
+    headline,
+    experiences,
+    educations,
+  );
 
   if (!isSuccess) {
     return next(new AppError('Updating user is fail', 400));

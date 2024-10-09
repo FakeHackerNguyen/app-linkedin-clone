@@ -1,7 +1,7 @@
 import React from 'react';
 import {Svg, Path} from 'react-native-svg';
 
-function BackIcon(): React.JSX.Element {
+export default function BackIcon(): React.JSX.Element {
   return (
     <Svg width="40" height="40" viewBox="0 0 24 24">
       <Path
@@ -15,5 +15,3 @@ function BackIcon(): React.JSX.Element {
     </Svg>
   );
 }
-
-export default BackIcon;
