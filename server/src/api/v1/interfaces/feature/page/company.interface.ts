@@ -7,8 +7,8 @@ export default interface ICompany extends Document {
     public_id: string;
   };
   industry: string;
-  location: string;
-  website: string;
-  size: string;
-  description: string;
+  location?: string;
+  website?: string;
+  size?: string;
+  description?: string;
 }

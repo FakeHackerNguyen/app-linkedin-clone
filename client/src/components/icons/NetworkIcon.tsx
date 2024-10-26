@@ -1,13 +1,19 @@
 import React from 'react';
 import {Svg, Path} from 'react-native-svg';
 
+type Props = {
+  color: string;
+  width: number;
+  height: number;
+};
+
 export default function NetworkIcon({
   color,
-}: {
-  color: string;
-}): React.JSX.Element {
+  width,
+  height,
+}: Props): React.JSX.Element {
   return (
-    <Svg width="30" height="30" viewBox="0 0 30 20" fill="none">
+    <Svg width={width} height={height} viewBox="0 0 30 20" fill="none">
       <Path
         d="M20.4545 8.57143C22.7182 8.57143 24.5318 6.65714 24.5318 4.28571C24.5318 1.91429 22.7182 0 20.4545 0C18.1909 0 16.3636 1.91429 16.3636 4.28571C16.3636 6.65714 18.1909 8.57143 20.4545 8.57143ZM9.54545 8.57143C11.8091 8.57143 13.6227 6.65714 13.6227 4.28571C13.6227 1.91429 11.8091 0 9.54545 0C7.28182 0 5.45455 1.91429 5.45455 4.28571C5.45455 6.65714 7.28182 8.57143 9.54545 8.57143ZM9.54545 11.4286C6.36818 11.4286 0 13.1 0 16.4286V20H19.0909V16.4286C19.0909 13.1 12.7227 11.4286 9.54545 11.4286ZM20.4545 11.4286C20.0591 11.4286 19.6091 11.4571 19.1318 11.5C20.7136 12.7 21.8182 14.3143 21.8182 16.4286V20H30V16.4286C30 13.1 23.6318 11.4286 20.4545 11.4286Z"
         fill={color}

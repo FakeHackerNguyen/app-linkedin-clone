@@ -6,8 +6,9 @@ import React, {useState} from 'react';
 import {View, Text, Image, Dimensions, Pressable} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SettingIcon from './icons/SettingIcon';
-import {Store} from '../redux/store';
-import {useSelector} from 'react-redux';
+import {AppDispatch, Store} from '../redux/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {changeQuerySearch} from '../redux/reducers/searchReducer';
 
 const {width} = Dimensions.get('screen');
 
@@ -16,6 +17,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
   const {navigation} = props;
 
   const {user} = useSelector((state: Store) => state.auth);
+  const dispatch: AppDispatch = useDispatch();
 
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -41,7 +43,10 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
             {user?.fullName}
           </Text>
           <Text
-            onPress={() => navigation.navigate('Profile', {idUser: user?._id})}
+            onPress={() => {
+              dispatch(changeQuerySearch(user?.fullName));
+              navigation.navigate('Profile', {idUser: user?._id});
+            }}
             style={{
               fontSize: width * 0.035,
             }}

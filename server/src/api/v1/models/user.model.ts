@@ -106,10 +106,11 @@ const userSchema = new Schema<IUser>({
           public_id: String,
         },
         name: String,
-        typeOfBusiness: String,
+        industry: String,
       },
       jobTitle: String,
       employmentType: String,
+      location: String,
       description: String,
       skills: [
         {
@@ -141,6 +142,24 @@ const userSchema = new Schema<IUser>({
     enum: UserRole,
     default: UserRole.USER,
   },
+  connections: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Connection',
+    },
+  ],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  following: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 userSchema.pre('save', function (next) {

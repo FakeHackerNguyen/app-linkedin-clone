@@ -65,13 +65,11 @@ passport.use(
             );
 
             return done(null, {
-              user,
+              data: user,
               newAccessToken,
             });
           }
-          return done(null, {
-            user,
-          });
+          return done(null, {data: user});
         } else {
           return done(null, false);
         }

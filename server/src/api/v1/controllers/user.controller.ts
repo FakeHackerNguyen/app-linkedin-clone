@@ -4,9 +4,10 @@ import AppError from '../utils/appError';
 import UserService from '../services/user.service';
 import EmailService from '../services/email.service';
 import AuthService from '../services/auth.service';
-import {CustomRequest} from '../interfaces';
 import cloudinary from '../../../config/cloudinary';
 import {formatUser} from '../utils';
+import {Types} from 'mongoose';
+import {StatusConnection} from '../interfaces/feature/user/connection.interface';
 
 export const login = catchAsyncError(async (req, res, next) => {
   const {email, password} = req.body;
@@ -142,44 +143,40 @@ export const sendOtp = catchAsyncError(async (req, res, next) => {
   });
 });
 
-export const verifyOTPToken = catchAsyncError(
-  async (req: CustomRequest, res, next) => {
-    const {otp, reason, email} = req.body;
+export const verifyOTPToken = catchAsyncError(async (req, res, next) => {
+  const {otp, reason, email} = req.body;
 
-    if (!otp || !email || !reason)
-      return next(new AppError('Please input otp or email or reason', 401));
+  if (!otp || !email || !reason)
+    return next(new AppError('Please input otp or email or reason', 401));
 
-    const existingUser = await UserService.getUserByEmail(email);
-    if (!existingUser) return next(new AppError('User not found', 404));
+  const existingUser = await UserService.getUserByEmail(email);
+  if (!existingUser) return next(new AppError('User not found', 404));
 
-    const isValidOTP = await EmailService.verifyOTP(reason, otp, existingUser);
-    if (!isValidOTP)
-      return next(new AppError('OTP is not correct or expired', 404));
+  const isValidOTP = await EmailService.verifyOTP(reason, otp, existingUser);
+  if (!isValidOTP)
+    return next(new AppError('OTP is not correct or expired', 404));
 
-    existingUser.isVerified = true;
-    await existingUser.save();
+  existingUser.isVerified = true;
+  await existingUser.save();
 
-    req.reqUser = existingUser;
-    next();
-  },
-);
+  req.user = {data: existingUser};
+  next();
+});
 
-export const resetPassword = catchAsyncError(
-  async (req: CustomRequest, res, next) => {
-    const {newPassword} = req.body;
-    const user = req.reqUser;
+export const resetPassword = catchAsyncError(async (req, res, next) => {
+  const {newPassword} = req.body;
+  const user = req.user!.data;
 
-    if (!user || !newPassword) return next(new AppError('Unknown error', 400));
+  if (!user || !newPassword) return next(new AppError('Unknown error', 400));
 
-    await UserService.updateUserPassword(user, newPassword);
+  await UserService.updateUserPassword(user, newPassword);
 
-    res.status(200).json({
-      data: {
-        message: 'Password is reset successfully. Please login again',
-      },
-    });
-  },
-);
+  res.status(200).json({
+    data: {
+      message: 'Password is reset successfully. Please login again',
+    },
+  });
+});
 
 export const updateInfoUser = catchAsyncError(async (req, res, next) => {
   const {email, location, headline, experiences, educations} = req.body;
@@ -203,37 +200,222 @@ export const updateInfoUser = catchAsyncError(async (req, res, next) => {
   });
 });
 
-export const updateAvatar = catchAsyncError(
-  async (req: CustomRequest, res, next) => {
-    const {email} = req.body;
-    const files = req.reqFiles;
+export const getPublicUser = catchAsyncError(async (req, res, next) => {
+  const {id} = req.params;
 
-    const existingUser = await UserService.getUserByEmail(email);
-    if (!existingUser) return next(new AppError('User is not found', 404));
+  const user = await UserService.getUserById(new Types.ObjectId(id));
 
-    if (Array.isArray(files) && files[0]) {
-      const avatarId = existingUser.avatar.public_id;
-      if (avatarId) {
-        if (!avatarId.includes('default-avatar')) {
-          const {result} = await cloudinary.uploader.destroy(avatarId);
-          if (result !== 'ok') {
-            return next(new AppError('Failed to delete old avatar', 400));
-          }
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
+  res.status(200).json({
+    data: {
+      user: formatUser(user),
+    },
+  });
+});
+
+export const getUser = catchAsyncError(async (req, res, next) => {});
+
+export const updateAvatar = catchAsyncError(async (req, res, next) => {
+  const {email} = req.body;
+  const files = req.files;
+
+  const existingUser = await UserService.getUserByEmail(email);
+  if (!existingUser) return next(new AppError('User is not found', 404));
+
+  if (Array.isArray(files) && files[0]) {
+    const avatarId = existingUser.avatar.public_id;
+    if (avatarId) {
+      if (!avatarId.includes('default-avatar')) {
+        const {result} = await cloudinary.uploader.destroy(avatarId);
+        if (result !== 'ok') {
+          return next(new AppError('Failed to delete old avatar', 400));
         }
       }
-      const {secure_url: url, public_id} = await cloudinary.uploader.upload(
-        files[0].path,
-        {folder: 'avatars'},
-      );
-
-      existingUser.avatar = {url, public_id};
-      existingUser.save();
     }
+    const {secure_url: url, public_id} = await cloudinary.uploader.upload(
+      files[0].path,
+      {folder: 'avatars'},
+    );
 
-    res.json({
-      data: {
-        message: 'Uploading avatar is successful',
-      },
+    existingUser.avatar = {url, public_id};
+    existingUser.save();
+  }
+
+  res.json({
+    data: {
+      message: 'Uploading avatar is successful',
+    },
+  });
+});
+
+export const followUser = catchAsyncError(async (req, res, next) => {
+  const followerId = new Types.ObjectId(req.user?.data._id as string);
+  const followingId = new Types.ObjectId(req.params.id);
+
+  const relationshipExists = await UserService.checkRelationshipExist(
+    followerId,
+    followingId,
+  );
+
+  if (relationshipExists) {
+    return next(new AppError('Already following this user', 400));
+  }
+
+  await UserService.createRelationship(followerId, followingId);
+
+  res.status(200).json({
+    message: 'Follow user successfully',
+  });
+});
+
+export const unfollowUser = catchAsyncError(async (req, res, next) => {
+  const followerId = new Types.ObjectId(req.user?.data._id as string);
+  const followingId = new Types.ObjectId(req.params.id);
+
+  const relationshipExists = await UserService.checkRelationshipExist(
+    followerId,
+    followingId,
+  );
+
+  if (!relationshipExists) {
+    return next(new AppError('Relationship does not exist', 400));
+  }
+
+  await UserService.deleteRelationship(followerId, followingId);
+
+  res.status(200).json({
+    data: {
+      message: 'Unfollow user successfully',
+    },
+  });
+});
+
+export const getFollowingUsers = catchAsyncError(async (req, res, next) => {
+  const relationships = await UserService.getRelationship(
+    new Types.ObjectId(req.user?.data._id as string),
+  );
+
+  const followingUsers = relationships
+    .map(relationship => ({
+      ...relationship.following,
+      followingSince: relationship.createdAt,
+    }))
+    .sort((a, b) => b.followingSince.getTime() - a.followingSince.getTime());
+
+  res.status(200).json(followingUsers);
+});
+
+export const requestConnection = catchAsyncError(async (req, res, next) => {
+  const {id} = req.params;
+  const requesterId = new Types.ObjectId(req.user?.data._id as string);
+  const {note} = req.body;
+
+  if (new Types.ObjectId(id).equals(requesterId)) {
+    return next(new AppError("You can't connect to yourself", 400));
+  }
+
+  const recipientUser = await UserService.getUserById(new Types.ObjectId(id));
+  if (!recipientUser) {
+    return next(new AppError('User is not found', 404));
+  }
+
+  const connectionExist = await UserService.checkConnectionExist(
+    requesterId,
+    new Types.ObjectId(recipientUser._id as string),
+  );
+
+  if (connectionExist) {
+    return next(new AppError('Connection is existing!', 400));
+  }
+
+  await UserService.createConnection(
+    requesterId,
+    new Types.ObjectId(recipientUser._id as string),
+    note,
+  );
+
+  res.status(200).json({
+    data: {
+      message: `Sent request to ${recipientUser.fullName}`,
+    },
+  });
+});
+
+export const responseConnection = catchAsyncError(async (req, res, next) => {
+  const {id} = req.params;
+  const userId = req.user?.data._id as string;
+  const {accept} = req.body;
+
+  const recConnection = await UserService.getConnectionById(
+    new Types.ObjectId(id),
+  );
+
+  if (!recConnection) {
+    return next(new AppError('Connection is not found', 404));
+  }
+
+  if (!new Types.ObjectId(userId).equals(recConnection.requester._id)) {
+    return next(new AppError('You can not reject this connection', 400));
+  }
+
+  const reqConnection = await UserService.getConnectionByRequesterAndRecipient(
+    recConnection.recipient,
+    recConnection.requester,
+  );
+
+  if (!reqConnection) {
+    return next(new AppError('Something went wrong', 500));
+  }
+
+  if (accept) {
+    recConnection.status = StatusConnection.FRIEND;
+    reqConnection.status = StatusConnection.FRIEND;
+    await reqConnection.save();
+    await recConnection.save();
+    await UserService.createRelationship(
+      recConnection.recipient,
+      recConnection.requester,
+    );
+    res.status(200).json({
+      data: {message: 'Confirmed successfully'},
     });
-  },
-);
+  } else {
+    await UserService.deleteConnection(new Types.ObjectId(id));
+    res.status(200).json({
+      data: {message: 'Rejected successfully'},
+    });
+  }
+});
+export const removeConnection = catchAsyncError(async (req, res, next) => {
+  const {id} = req.params;
+  const connection = await UserService.getConnectionById(
+    new Types.ObjectId(id),
+  );
+
+  if (!connection) {
+    return next(new AppError('Connection is not found', 404));
+  }
+
+  await UserService.deleteConnection(new Types.ObjectId(id));
+
+  res.status(200).json({
+    data: {message: 'Remove connection succefully'},
+  });
+});
+export const getConnections = catchAsyncError(async (req, res, next) => {
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
+
+  const user = req.user!.data;
+
+  const connections = await UserService.getFriendConnection(user, page, limit);
+
+  res.json({
+    data: {
+      connections,
+    },
+  });
+});

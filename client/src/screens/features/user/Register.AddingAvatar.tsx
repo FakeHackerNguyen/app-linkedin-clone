@@ -42,8 +42,8 @@ export default function RegisterAddingAvatar({
       name: 'avatar',
     });
 
-    const {errorMessage} = await updateAvatar(formData);
-    if (!errorMessage) {
+    const {message} = await updateAvatar(formData);
+    if (!message) {
       return navigation.replace('VerifyingEmail', {email});
     }
   };

@@ -18,7 +18,9 @@ type TabBarIconName = {
 
 const tabIcons: TabBarIconName = {
   Home: (color: string) => <HomeIcon color={color} />,
-  'My Network': (color: string) => <NetworkIcon color={color} />,
+  'My Network': (color: string) => (
+    <NetworkIcon width={30} height={30} color={color} />
+  ),
   Post: (color: string) => <PostIcon color={color} />,
   Notifications: (color: string) => <NotificationIcon color={color} />,
   Jobs: (color: string) => <JobIcon color={color} />,
@@ -29,18 +31,16 @@ export default function CustomTabBar({
   descriptors,
   navigation,
 }: BottomTabBarProps): React.JSX.Element {
-  // Create animated values for each tab
   const animatedValues = useRef(
     state.routes.map(() => new Animated.Value(0)),
   ).current;
 
   useEffect(() => {
-    // Animate the border when the tab is focused
     state.routes.forEach((route, index) => {
       previousBorderIndex = state.index > 4 ? previousBorderIndex : state.index;
       Animated.timing(animatedValues[index], {
         toValue: previousBorderIndex === index ? 1 : 0,
-        duration: 300, // Animation duration (in ms)
+        duration: 300,
         useNativeDriver: false,
       }).start();
     });
@@ -50,7 +50,11 @@ export default function CustomTabBar({
     <View className="flex-row justify-around bg-white">
       {state.routes
         .filter(
-          route => route.name !== 'DetailSearch' && route.name !== 'Profile',
+          route =>
+            route.name !== 'DetailSearch' &&
+            route.name !== 'Profile' &&
+            route.name !== 'Manage My Network' &&
+            route.name !== 'Connection',
         )
         .map((route, index) => {
           const {options} = descriptors[route.key];

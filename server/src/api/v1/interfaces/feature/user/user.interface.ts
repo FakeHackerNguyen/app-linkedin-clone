@@ -33,10 +33,8 @@ export default interface IUser extends Document {
     lastestLogin: Date;
   };
   isVerified: boolean;
+  connections: Array<Types.ObjectId>;
+  followers: Array<Types.ObjectId>;
+  following: Array<Types.ObjectId>;
   comparePassword(password: string): boolean;
-}
-
-export interface AuthenticatedUser {
-  user: IUser;
-  newAccessToken?: string;
 }

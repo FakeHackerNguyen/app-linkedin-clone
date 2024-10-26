@@ -37,6 +37,13 @@ export type Education = {
   endStudy: Date;
 };
 
+export type Connection = {
+  requester: User;
+  recipient: User;
+  status: string;
+  note: string;
+};
+
 export type User = {
   _id: string;
   firstName: string;
@@ -55,4 +62,20 @@ export type User = {
   about: string;
   experiences: Array<Experience>;
   educations: Array<Education>;
+  connections: Array<Connection>;
+  followers: Array<User>;
+  following: Array<User>;
+};
+
+export type Post = {
+  _id: string;
+  content: string;
+  user: User;
+  media: {
+    url: string;
+    public_id: string;
+    resource_type: string;
+  };
+  visibility: string;
+  commentControl: string;
 };

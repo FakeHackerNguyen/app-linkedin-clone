@@ -1,12 +1,4 @@
-import {Request} from 'express';
-import IUser from './feature/user/user.interface';
-
-export interface CustomRequest extends Request {
-  reqUser?: IUser;
-  reqFiles?: Express.Multer.File[];
-}
-
-export type Experience = {
+export interface Experience {
   company: {
     avatar: {
       url: string;
@@ -24,9 +16,9 @@ export type Experience = {
   skills?: Array<string>;
   startWork?: Date;
   endWork?: Date;
-};
+}
 
-export type Education = {
+export interface Education {
   school: {
     avatar: {
       url: string;
@@ -43,4 +35,4 @@ export type Education = {
   skills?: Array<string>;
   startStudy?: Date;
   endStudy?: Date;
-};
+}

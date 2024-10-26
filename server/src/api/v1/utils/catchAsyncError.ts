@@ -1,5 +1,4 @@
 import {Request, Response, NextFunction} from 'express';
-import {CustomRequest} from '../interfaces';
 
 function catchAsyncError(
   cb: (req: Request, res: Response, next: NextFunction) => Promise<void>,

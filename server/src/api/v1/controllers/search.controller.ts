@@ -1,3 +1,4 @@
+import {query} from 'express';
 import SearchService from '../services/search.service';
 import UserService from '../services/user.service';
 import {shuffleArray} from '../utils';
@@ -21,6 +22,7 @@ export const searchCommon = catchAsyncError(async (req, res, next) => {
           experiences: e.experiences,
           educations: e.educations,
           avatar: e.avatar,
+          location: e.location,
         },
       })),
       ...companies.map(e => ({
@@ -43,7 +45,9 @@ export const searchCommon = catchAsyncError(async (req, res, next) => {
       })),
     ];
 
-    combinedResults = shuffleArray(combinedResults).slice(0, 6);
+    combinedResults = shuffleArray(combinedResults)
+      .slice(0, 5)
+      .concat({type: 'Suggest', data: q});
   }
 
   res.status(200).json({

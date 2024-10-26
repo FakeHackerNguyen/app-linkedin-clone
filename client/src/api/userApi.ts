@@ -1,3 +1,4 @@
+import {User} from '../types';
 import {baseUrlApi} from './baseUrlApi';
 
 export async function register(userInfo: {
@@ -21,13 +22,13 @@ export async function register(userInfo: {
       throw new Error(data.message);
     }
 
-    return {errorMessage: null};
+    return {message: null};
   } catch (error) {
     if (error instanceof Error) {
-      return {errorMessage: error.message};
+      return {message: error.message};
     }
 
-    return {errorMessage: 'An unknown error occurred'};
+    return {message: 'An unknown error occurred'};
   }
 }
 
@@ -47,13 +48,36 @@ export async function updateUser(formData: URLSearchParams) {
       throw new Error(data.message);
     }
 
-    return {errorMessage: null};
+    return {message: null};
   } catch (error) {
     if (error instanceof Error) {
-      return {errorMessage: error.message};
+      return {message: error.message};
     }
 
-    return {errorMessage: 'An unknown error occurred'};
+    return {message: 'An unknown error occurred'};
+  }
+}
+
+export async function getPublicUser(userId: string): Promise<{
+  data: {user: User | null};
+  message: string | null;
+}> {
+  try {
+    const res = await fetch(`${baseUrlApi}/users/public-users/${userId}`);
+
+    const data = await res.json();
+
+    if (data.message) {
+      throw new Error(data.message);
+    }
+
+    return {data: data.data, message: null};
+  } catch (error) {
+    if (error instanceof Error) {
+      return {data: null, message: error.message};
+    }
+
+    return {data: null, message: 'An unknown error occurred'};
   }
 }
 
@@ -74,13 +98,13 @@ export async function updateAvatar(formData: FormData) {
       throw new Error(data.message);
     }
 
-    return {errorMessage: null};
+    return {message: null};
   } catch (error) {
     if (error instanceof Error) {
-      return {errorMessage: error.message};
+      return {message: error.message};
     }
 
-    return {errorMessage: 'An unknown error occurred'};
+    return {message: 'An unknown error occurred'};
   }
 }
 
@@ -100,13 +124,13 @@ export async function sendOtp(email: string, reason: string) {
       throw new Error(data.message);
     }
 
-    return {errorMessage: null};
+    return {message: null};
   } catch (error) {
     if (error instanceof Error) {
-      return {errorMessage: error.message};
+      return {message: error.message};
     }
 
-    return {errorMessage: 'An unknown error occurred'};
+    return {message: 'An unknown error occurred'};
   }
 }
 
@@ -126,13 +150,13 @@ export async function verifyOtp(email: string, otp: string, reason: string) {
       throw new Error(data.message);
     }
 
-    return {data: data.data, errorMessage: null};
+    return {data: data.data, message: null};
   } catch (error) {
     if (error instanceof Error) {
-      return {errorMessage: error.message};
+      return {message: error.message};
     }
 
-    return {errorMessage: 'An unknown error occurred'};
+    return {message: 'An unknown error occurred'};
   }
 }
 
@@ -157,12 +181,12 @@ export async function resetPassword(
       throw new Error(data.message);
     }
 
-    return {errorMessage: null};
+    return {message: null};
   } catch (error) {
     if (error instanceof Error) {
-      return {errorMessage: error.message};
+      return {message: error.message};
     }
 
-    return {errorMessage: 'An unknown error occurred'};
+    return {message: 'An unknown error occurred'};
   }
 }

@@ -1,12 +1,11 @@
-import React, {SetStateAction, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
 import Notifications from '../screens/Notifications';
-import Post from '../screens/Post';
-import MyNetwork from '../screens/MyNetwork';
+import PostTab from '../screens/PostTab';
 import Jobs from '../screens/Jobs';
 import {
   Animated,
@@ -18,6 +17,8 @@ import CustomTabBar from '../components/CustomTabBar';
 import DetailSearch from '../screens/features/search/DetailSearch';
 import Profile from '../screens/features/user/Profile';
 import CreatingPostModal from '../components/CreatingPostModal';
+import {Company, School, User} from '../types';
+import NetworkNavigator from './NetworkNavigator';
 
 const {height} = Dimensions.get('screen');
 
@@ -27,29 +28,26 @@ export type TabParamList = {
   Post: undefined;
   Notifications: undefined;
   Jobs: undefined;
-  DetailSearch: undefined;
+  DetailSearch: {
+    i: {
+      type: string;
+      data: User | Company | School | string;
+    };
+  };
   Profile: {idUser: string};
+  'Manage My Network': undefined;
+  Connection: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-type AppBottomNavigatorProps = {
-  query: string;
-  setQuery: React.Dispatch<SetStateAction<string>>;
-  isSearchFocus: boolean;
-  setIsSearchFocus: React.Dispatch<React.SetStateAction<boolean>>;
-};
+type AppBottomNavigatorProps = {};
 
 const renderCustomTabBar = (props: BottomTabBarProps) => (
   <CustomTabBar {...props} />
 );
 
-export default function AppBottomNavigator({
-  query,
-  setQuery,
-  isSearchFocus,
-  setIsSearchFocus,
-}: AppBottomNavigatorProps): React.JSX.Element {
+export default function AppBottomNavigator({}: AppBottomNavigatorProps): React.JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(height)).current;
 
@@ -77,34 +75,17 @@ export default function AppBottomNavigator({
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Tab.Navigator
+        initialRouteName="Home"
         screenOptions={{
           headerShown: false,
         }}
         tabBar={renderCustomTabBar}>
-        <Tab.Screen name="Home">
-          {props => (
-            <Home
-              {...props}
-              query={query}
-              setQuery={setQuery}
-              isSearchFocus={isSearchFocus}
-              setIsSearchFocus={setIsSearchFocus}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="My Network">
-          {props => (
-            <MyNetwork
-              {...props}
-              query={query}
-              isSearchFocus={isSearchFocus}
-              setIsSearchFocus={setIsSearchFocus}
-            />
-          )}
-        </Tab.Screen>
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="My Network" component={NetworkNavigator} />
+
         <Tab.Screen
           name="Post"
-          component={Post}
+          component={PostTab}
           listeners={{
             tabPress: e => {
               e.preventDefault();
@@ -112,27 +93,8 @@ export default function AppBottomNavigator({
             },
           }}
         />
-        <Tab.Screen name="Notifications">
-          {props => (
-            <Notifications
-              {...props}
-              query={query}
-              isSearchFocus={isSearchFocus}
-              setIsSearchFocus={setIsSearchFocus}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="Jobs">
-          {props => (
-            <Jobs
-              {...props}
-              query={query}
-              isSearchFocus={isSearchFocus}
-              setIsSearchFocus={setIsSearchFocus}
-            />
-          )}
-        </Tab.Screen>
-
+        <Tab.Screen name="Notifications" component={Notifications} />
+        <Tab.Screen name="Jobs" component={Jobs} />
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="DetailSearch" component={DetailSearch} />
       </Tab.Navigator>

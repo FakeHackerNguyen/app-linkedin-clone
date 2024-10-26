@@ -1,9 +1,11 @@
-import 'dotenv/config';
-import fs from 'fs';
+import dotenv from 'dotenv';
 import Database from '../../../config/database';
 import companyModel from '../models/company.model';
-import {Companies, Universities} from '../data';
+import {Companies, Universities, Users} from '../data';
 import universityModel from '../models/university.model';
+import userModel from '../models/user.model';
+
+dotenv.config({path: '../../../../.env'});
 
 const db: Database =
   process.env.NODE_ENV === 'development'
@@ -18,5 +20,8 @@ switch (process.argv[2]) {
     break;
   case '--universities':
     universityModel.create(Universities);
+    break;
+  case '--users':
+    userModel.create(Users);
     break;
 }

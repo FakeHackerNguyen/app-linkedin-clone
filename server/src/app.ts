@@ -9,6 +9,7 @@ import userRouter from './api/v1/routes/user.route';
 import pageRouter from './api/v1/routes/page.route';
 import externalRouter from './api/v1/routes/external.route';
 import searchRouter from './api/v1/routes/search.route';
+import postRouter from './api/v1/routes/post.route';
 
 const app: Express = express();
 
@@ -27,6 +28,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/pages', pageRouter);
 app.use('/api/v1/externals', externalRouter);
 app.use('/api/v1/searchs', searchRouter);
+app.use('/api/v1/posts', postRouter);
 
 app.use('/server', (req: Request, res: Response): void => {
   res.status(200).json({

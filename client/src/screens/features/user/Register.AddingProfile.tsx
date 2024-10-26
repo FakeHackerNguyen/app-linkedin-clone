@@ -149,9 +149,9 @@ export default function RegisterAddingProfile({
           );
         }
 
-        const {errorMessage} = await updateUser(formData);
+        const {message} = await updateUser(formData);
 
-        if (!errorMessage) {
+        if (!message) {
           return navigation.replace('AddingAvatar', {email});
         }
       }

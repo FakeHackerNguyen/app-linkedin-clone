@@ -1,12 +1,22 @@
 import React from 'react';
 import {Svg, Path} from 'react-native-svg';
 
-export default function BackIcon(): React.JSX.Element {
+type Props = {
+  width: number;
+  height: number;
+  color: string;
+};
+
+export default function BackIcon({
+  width,
+  height,
+  color,
+}: Props): React.JSX.Element {
   return (
-    <Svg width="40" height="40" viewBox="0 0 24 24">
+    <Svg width={width} height={height} viewBox="0 0 24 24">
       <Path
         d="M6 12h12M6 12l4-4m-4 4l4 4"
-        stroke="#666" // Color of the arrow
+        stroke={color} // Color of the arrow
         strokeWidth="1" // Width of the arrow
         fill="none" // No fill color
         strokeLinecap="round" // Rounded edges for the stroke

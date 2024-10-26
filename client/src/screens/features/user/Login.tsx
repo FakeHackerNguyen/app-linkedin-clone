@@ -165,7 +165,7 @@ export default function Login({
             className="items-center justify-center"
             onPress={async () => {
               await dispatch(login({email: emailPhone, password}));
-              navigation.navigate('Main');
+              navigation.replace('Main');
             }}
             onPressIn={() => setIsSignInPressed(true)}
             onPressOut={() => setIsSignInPressed(false)}>

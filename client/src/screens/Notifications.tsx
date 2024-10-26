@@ -1,21 +1,25 @@
+import {DrawerNavigationProp} from '@react-navigation/drawer';
 import React from 'react';
 import {Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
+import {Store} from '../redux/store';
+import CustomSearchHeaderDrawer from '../components/CustomSearchHeaderDrawer';
+import ResultSearch from '../components/ResultSearch';
 
 type NotificationProps = {
-  query: string;
-  isSearchFocus: boolean;
-  setIsSearchFocus: React.Dispatch<React.SetStateAction<boolean>>;
+  navigation: DrawerNavigationProp<any>;
 };
 
 export default function Notifications({
-  query,
-  isSearchFocus,
-  setIsSearchFocus,
+  navigation,
 }: NotificationProps): React.JSX.Element {
+  const {isSearchFocus} = useSelector((state: Store) => state.search);
+
   return (
     <SafeAreaView className="bg-white flex-1">
-      <Text>Notifications</Text>
+      <CustomSearchHeaderDrawer navigation={navigation} />
+      {isSearchFocus ? <ResultSearch /> : <Text>Notifications</Text>}
     </SafeAreaView>
   );
 }

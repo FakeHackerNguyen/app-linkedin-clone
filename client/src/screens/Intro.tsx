@@ -137,7 +137,6 @@ function Intro({navigation}: {navigation: NavigationProp}): React.JSX.Element {
     const auth = async () => {
       const accessToken = (await AsyncStorage.getItem('accessToken')) as string;
       await dispatch(isAuth({accessToken}));
-      console.log(accessToken);
     };
     auth();
   }, [dispatch]);
@@ -205,7 +204,7 @@ function Intro({navigation}: {navigation: NavigationProp}): React.JSX.Element {
             backgroundColor: isSigninPressed ? '#D8E8FB' : 'transparent',
           }}
           className="items-center justify-center"
-          onPress={() => navigation.navigate('Signin')}
+          onPress={() => navigation.replace('Signin')}
           onPressIn={() => setIsSignInPressed(true)}
           onPressOut={() => setIsSignInPressed(false)}>
           <Text

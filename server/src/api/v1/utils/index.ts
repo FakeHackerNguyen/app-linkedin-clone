@@ -19,6 +19,7 @@ export function parseData(req: Request, res: Response, next: NextFunction) {
 
 export function formatUser(user: IUser) {
   return {
+    _id: user._id,
     firstName: user.firstName,
     lastName: user.lastName,
     fullName: user.fullName,
@@ -30,6 +31,9 @@ export function formatUser(user: IUser) {
     headline: user.headline,
     experiences: user.experiences,
     educations: user.educations,
+    connections: user.connections,
+    followers: user.followers,
+    following: user.following,
     isVerified: user.isVerified,
   };
 }

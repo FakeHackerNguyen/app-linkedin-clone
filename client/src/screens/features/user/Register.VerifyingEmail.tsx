@@ -43,9 +43,9 @@ export default function RegisterVerifyingEmail({
   const {email} = route.params;
 
   const handleSendOtp = async () => {
-    const {errorMessage} = await sendOtp(email, 'Sign Up');
+    const {message} = await sendOtp(email, 'Sign Up');
 
-    if (!errorMessage) {
+    if (!message) {
       return;
     }
   };

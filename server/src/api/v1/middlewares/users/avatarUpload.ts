@@ -45,9 +45,9 @@ export default function avatarUpload(
 
   upload.any()(req, res, err => {
     if (err) {
-      next(new AppError('Error uploading file', 500));
+      return next(new AppError('Error uploading file', 500));
     } else {
-      next();
+      return next();
     }
   });
 }
